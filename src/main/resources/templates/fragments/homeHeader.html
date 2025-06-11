@@ -1,0 +1,33 @@
+<!-- homeHeader.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="homeHeader">
+    <nav class="navbar navbar-light bg-white border-bottom px-4">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+
+            <!-- ✅ 왼쪽 로고 영역 -->
+            <a href="/" class="navbar-brand fw-bold text-dark fs-4">BookShop</a>
+
+            <!-- 오른쪽 로그인 / 사용자 메뉴 -->
+            <div th:if="${session.loginMember == null}">
+                <a class="nav-link text-primary" href="/members/new">회원가입</a>
+                <a class="nav-link text-primary" href="/login">로그인</a>
+            </div>
+
+            <div th:if="${session.loginMember != null}" class="d-flex align-items-center gap-3">
+                <div th:if="${session.loginMember.role == 'ADMIN'}">
+                    <a class="nav-link text-danger fw-bold" href="/admin">관리자 메뉴</a>
+                </div>
+
+                <a class="nav-link text-primary" href="/orders">내 주문</a>
+                <span th:text="'환영합니다, ' + ${session.loginMember.name} + '님'" class="text-success fw-bold"></span>
+
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">로그아웃</button>
+                </form>
+            </div>
+
+        </div>
+    </nav>
+</div>
+</html>

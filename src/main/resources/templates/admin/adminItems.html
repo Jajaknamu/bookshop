@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>책 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!--상단 네비게이션-->
+<div th:replace="fragments/homeHeader :: homeHeader"></div>
+
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4">📘 등록된 책 관리</h2>
+
+    <a href="/items/new" class="btn btn-primary mb-3">📚 책 등록</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>제목</th>
+            <th>가격</th>
+            <th>재고</th>
+            <th>저자</th>
+            <th>ISBN</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody id="bookTableBody">
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            $.get("/api/admin/items", function (books) {
+                const body = $("#bookTableBody");
+                books.forEach(book => {
+                    const row = `
+          <tr>
+            <td>${book.id}</td>
+            <td>${book.name}</td>
+            <td>${book.price}</td>
+            <td>${book.stockQuantity}</td>
+            <td>${book.author}</td>
+            <td>${book.isbn}</td>
+            <td>
+              <a href="/items/${book.id}/edit" class="btn btn-sm btn-outline-secondary">수정</a>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">삭제</button>
+            </td>
+          </tr>`;
+                    body.append(row);
+                });
+            });
+        });
+
+        function deleteBook(id) {
+            if (!confirm("정말 삭제하시겠습니까?")) return;
+            $.ajax({
+                url: `/api/admin/items/${id}`, // 경로 바뀜
+                type: "DELETE",
+                success: () => location.reload(),
+                error: () => alert("삭제 실패")
+            });
+        }
+    </script>
+
+    <div class="mt-5">
+        <a href="/admin" class="btn btn-secondary">관리자 대시보드로</a>
+    </div>
+</div>
+
+</body>
+</html>
