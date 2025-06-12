@@ -23,6 +23,7 @@ public class BookForm {
 
       //이미지 파일 추가
       private MultipartFile imageFile;
+      private String imageName;
 
       //Book 엔티티 생성 + 이미지 저장처리 포함
       public Book toEntityWithImage() throws IOException {
@@ -33,15 +34,22 @@ public class BookForm {
             book.setAuthor(this.author);
             book.setIsbn(this.isbn);
 
-            //이미지 업로드 처리
+            // 이미지 업로드 처리
             if (imageFile != null && !imageFile.isEmpty()) {
+                  // 기존 이미지 파일 삭제 (선택)
+                  if (this.imageName != null) {
+                        File oldFile = new File("src/main/resources/static/images/" + this.imageName); // 경로 수정
+                        if (oldFile.exists()) oldFile.delete();
+                  }
+
                   String uuidFileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
                   String uploadPath = new File("src/main/resources/static/images", uuidFileName).getAbsolutePath();
 
-                  //실제 파일 저장
                   imageFile.transferTo(new File(uploadPath));
-                  //DB에는 파일명만 저장
                   book.setImageName(uuidFileName);
+            } else {
+                  // 새 이미지 없으면 기존 이미지 유지
+                  book.setImageName(this.imageName);
             }
             return book;
       }

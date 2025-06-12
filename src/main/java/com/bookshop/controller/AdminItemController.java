@@ -32,13 +32,13 @@ public class AdminItemController {
         itemService.saveItem(book);
         return ResponseEntity.ok(book.getId());
     }
-
+/*
     //책 수정
     @PatchMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @ModelAttribute BookDto dto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody BookDto dto) {
         itemService.updateItem(id, dto.getName(), dto.getPrice(), dto.getStockQuantity());
         return ResponseEntity.ok("수정 완료");
-    }
+    }*/
 
     //책 삭제
     @DeleteMapping("/{id}")

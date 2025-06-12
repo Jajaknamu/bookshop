@@ -92,7 +92,7 @@ public class ItemController {
         form.setIsbn(item.getIsbn());
 
         model.addAttribute("form", form);
-        return "items/updateItemForm";
+        return "admin/updateItemForm";
 
     }
     /**
@@ -100,20 +100,40 @@ public class ItemController {
      * @param form
      * @return
      */
-    @PostMapping(value = "/items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") BookForm form, @PathVariable String itemId) {
-
+    @PostMapping("/items/{itemId}/edit")
+    public String updateItem(@ModelAttribute BookForm form, @PathVariable Long itemId) throws IOException {
         Book book = new Book();
+        book.setId(itemId); // 기존 Book의 ID 설정
 
-        book.setId(form.getId());
         book.setName(form.getName());
         book.setPrice(form.getPrice());
         book.setStockQuantity(form.getStockQuantity());
         book.setAuthor(form.getAuthor());
         book.setIsbn(form.getIsbn());
 
+        MultipartFile imageFile = form.getImageFile();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // 새 이미지 업로드
+            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+            String uploadPath = "C:/upload"; // 등록과 동일한 경로
+
+            File saveFile = new File(uploadPath, fileName);
+            imageFile.transferTo(saveFile);
+            book.setImageName(fileName);
+
+            // 기존 이미지 삭제
+            if (form.getImageName() != null) {
+                File oldFile = new File(uploadPath, form.getImageName());
+                if (oldFile.exists()) oldFile.delete();
+            }
+        } else {
+            // 이미지 안 바꿨으면 기존 이미지 그대로
+            book.setImageName(form.getImageName());
+        }
+
         itemService.saveItem(book);
-        return "redirect:/items";
+        return "redirect:/api/admin/items";
     }
 
     //책 상세 페이지
