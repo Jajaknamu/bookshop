@@ -18,15 +18,13 @@
 - **Database** : H2
 
 ## 📌주요기능
-- 회원 기능 - 회원가입, 로그인, 내 주문 목록 확인, 주문 수량 만큼 상품수량 변경
+- 회원 기능 - 회원가입, 로그인, 내 주문 목록 확인, 주문 수량 만큼 상품수량 변경, 주문 내역 검색
   
-  
-<img src="https://github.com/user-attachments/assets/a36934d9-7dfe-4592-89cf-a38b00f0ac20" width="700"/>
+<img src="https://github.com/user-attachments/assets/a36934d9-7dfe-4592-89cf-a38b00f0ac20" width="700"/>  
+
+주문내역 검색   
+<img src="https://github.com/user-attachments/assets/45e21d70-ce5a-456f-80ae-43e375f899f8" width="700"/>
 
 
 - 상품 기능 - 관리자 전용=(책 등록, 등록된 책 목록 확인, 수정 및 삭제, 주문된 모든 내역)
 <img src="https://github.com/user-attachments/assets/e9c34d36-5d40-44ab-9ccf-aa31aee4d0ce" width="700"/>
-
-
-- 주문 기능 - 회원 별 상품 주문, 주문 내역 확인 및 취소, 주문 내역 검색
-<img src="https://github.com/user-attachments/assets/45e21d70-ce5a-456f-80ae-43e375f899f8" width="700"/>
