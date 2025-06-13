@@ -1,9 +1,9 @@
-# 📚 BookShop (토이 프로젝트)
+# 📚 BookShop (사이드 프로젝트)
 
 > 간단한 상품 주문 사이트 -> 스프링 부트 + 스프링 데이터 JPA + RESTful API
 
 > 📬 이메일: heyfer6867@gmail.com  
-> 💼 포트폴리오: 
+> 💼 포트폴리오: https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link
 --- 
 
 ## 💡 프로젝트 소개
