@@ -1,30 +1,68 @@
-# BookShop(토이프로젝트)
+# 📚 BookShop (토이 프로젝트)
 간단한 상품 주문 사이트 -> 스프링 부트 + 스프링 데이터 JPA + RESTful API
 
 ## 💻 프로젝트 소개
 `실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발` 강의를 참고하여 만든 프로젝트입니다.  
-스프링부트와 RESTful API를 활용한 간단한 책 주문 사이트입니다. 
+스프링부트와 RESTful API 구조로 주문 흐름에 대한 이해를 목표로 하며, 도서 등록, 주문, 회원 관리 등 전반적인 웹 애플리케이션의 기능을 백엔드 중심으로 구현했습니다.
 
 ## ⏱️개발 기간
 - 2025.04.07 ~ 04.27
 
-## ⚙️개발환경
-- `Java 17`
-- `gradle`
-- `spring-boot 3.2.5`
-- `Tymeleaf`
-- `Spring Data Jpa`
-- **IDE** : IntelliJ IDEA
-- **Database** : H2
+## ⚙ 개발 환경
 
-## 📌주요기능
-- 회원 기능 - 회원가입, 로그인, 내 주문 목록 확인, 주문 수량 만큼 상품수량 변경, 주문 내역 검색
+- **Language**: Java 17  
+- **Framework**: Spring Boot 3.2.5, Spring Data JPA  
+- **Template**: Thymeleaf  
+- **Build Tool**: Gradle  
+- **Database**: H2  
+- **IDE**: IntelliJ IDEA 
+
+## 🧩 주요 기능 
+
+### 🧑‍💼 회원 기능
+- 회원가입 및 로그인
+- 주문 내역 확인
+- 주문 시 수량만큼 재고 자동 차감
   
-<img src="https://github.com/user-attachments/assets/a36934d9-7dfe-4592-89cf-a38b00f0ac20" width="700"/>  
+  <img src="https://github.com/user-attachments/assets/e705f364-f041-4baf-acb4-664185914f57" width="450"/>
+  <img src="https://github.com/user-attachments/assets/01429053-e224-47a5-9589-a0b5f6779c6c" width="450"/> 
+  <img src="https://github.com/user-attachments/assets/9e50f650-b58e-447d-a5e5-2f6e5621ddfa" width="450"/>
+  
 
-주문내역 검색   
-<img src="https://github.com/user-attachments/assets/45e21d70-ce5a-456f-80ae-43e375f899f8" width="700"/>
+--- 
+
+### 📦 주문 기능
+- 주문 생성 / 취소
+- 주문 내역 검색 기능 제공
+  
+  <img src="https://github.com/user-attachments/assets/ae85badb-58c3-4679-be4e-075315eeef7b" width="450"/>
+  <img src="https://github.com/user-attachments/assets/b7071085-dec7-4927-a9be-ce9be7dd5df0" width="450"/>
+  <img src="https://github.com/user-attachments/assets/b17c7185-6aa5-4d25-bd9d-95ef58095a9a" width="450"/>
 
 
-- 상품 기능 - 관리자 전용=(책 등록, 등록된 책 목록 확인, 수정 및 삭제, 주문된 모든 내역)
-<img src="https://github.com/user-attachments/assets/e9c34d36-5d40-44ab-9ccf-aa31aee4d0ce" width="700"/>
+--- 
+
+### 📚 상품 기능 (관리자 전용)
+- 도서 등록 / 수정 / 삭제
+- 전체 주문 내역 확인
+  
+  <img src="https://github.com/user-attachments/assets/16dcf8fc-b72d-4bed-b32f-2b0f6677f456" width="450"/>
+  <img src="https://github.com/user-attachments/assets/a42625cc-5236-493c-b749-ef6ccc634a2f" width="450"/>
+  <img src="https://github.com/user-attachments/assets/c67d0ca0-a10f-4e43-a4bf-4d3584753404" width="450"/>
+  <img src="https://github.com/user-attachments/assets/dbceedae-acf2-493a-bae0-599bbe28a7ff" width="450"/>
+
+
+## 🎬 시연 화면
+  
+<img src="https://github.com/user-attachments/assets/a36934d9-7dfe-4592-89cf-a38b00f0ac20" width="500"/>  
+<img src="https://github.com/user-attachments/assets/45e21d70-ce5a-456f-80ae-43e375f899f8" width="500"/>
+<img src="https://github.com/user-attachments/assets/e9c34d36-5d40-44ab-9ccf-aa31aee4d0ce" width="500"/>
+
+
+  ## ✍️ 개발 후기
+
+- JPA의 연관관계 매핑과 주문 흐름 구현을 통해 도메인 설계에 대한 기초를 다졌습니다.  
+- Thymeleaf를 통한 MVC방식으로도 실습해보고 화면 출력과 컨트롤러 간 역할 분리를 배웠습니다.  
+- 기존 MVC방식에서 RESTful API 설계 방식으로 리펙토링하여 기본 구조를 실습할 수 있는 좋은 경험이었습니다.
+
+
