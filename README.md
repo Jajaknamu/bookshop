@@ -1,25 +1,37 @@
 # 📚 BookShop (토이 프로젝트)
-간단한 상품 주문 사이트 -> 스프링 부트 + 스프링 데이터 JPA + RESTful API
 
-## 💻 프로젝트 소개
+> 간단한 상품 주문 사이트 -> 스프링 부트 + 스프링 데이터 JPA + RESTful API
+
+> 📬 이메일: heyfer6867@gmail.com  
+> 💼 포트폴리오: 
+--- 
+
+## 💡 프로젝트 소개
 `실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발` 강의를 참고하여 만든 프로젝트입니다.  
 스프링부트와 RESTful API 구조로 주문 흐름에 대한 이해를 목표로 하며, 도서 등록, 주문, 회원 관리 등 전반적인 웹 애플리케이션의 기능을 백엔드 중심으로 구현했습니다.
 
 ## ⏱️개발 기간
-- 2025.04.07 ~ 04.27
+- **2025.04.07 ~ 04.27**
 
-## ⚙ 개발 환경
+- ## ⚙️ 개발 환경 및 기술 스택
 
-- **Language**: Java 17  
-- **Framework**: Spring Boot 3.2.5, Spring Data JPA  
-- **Template**: Thymeleaf  
-- **Build Tool**: Gradle  
-- **Database**: H2  
-- **IDE**: IntelliJ IDEA 
+| Category            | Stack                                                                 |
+|-----------------    |-----------------------------------------------------------------------|
+| **Language**        | Java 17                                                               |
+| **Backend**         | Spring Boot 3.2.5                                                     |
+| **Frontend**        | Thymeleaf, HTML/CSS, JavaScript, AJAX                                 |
+| **Template Engine** | Thymeleaf                                                             |
+| **Database / ORM**  | H2, Spring Data JPA                                                   |
+| **Build Tool**      | Gradle                                                                |
+| **IDE**             | IntelliJ IDEA                                                         |
+| **Tools**           | Git, GitHub                                                           |
+| **Testing**         |JUnit                                                                  |
 
-## 🧩 주요 기능 
+--- 
 
-### 🧑‍💼 회원 기능
+## 🧩 주요 기능 / 시연 이미지
+
+### ✅ 회원 기능
 - 회원가입 및 로그인
 - 주문 내역 확인
 - 주문 시 수량만큼 재고 자동 차감
@@ -29,9 +41,7 @@
   <img src="https://github.com/user-attachments/assets/9e50f650-b58e-447d-a5e5-2f6e5621ddfa" width="450"/>
   
 
---- 
-
-### 📦 주문 기능
+### ✅ 주문 기능
 - 주문 생성 / 취소
 - 주문 내역 검색 기능 제공
   
@@ -40,9 +50,7 @@
   <img src="https://github.com/user-attachments/assets/b17c7185-6aa5-4d25-bd9d-95ef58095a9a" width="450"/>
 
 
---- 
-
-### 📚 상품 기능 (관리자 전용)
+### ✅ 상품 기능 (관리자 전용)
 - 도서 등록 / 수정 / 삭제
 - 전체 주문 내역 확인
   
