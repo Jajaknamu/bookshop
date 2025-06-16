@@ -58,6 +58,23 @@
 | DELETE | `/api/items/{id}` | 상품 삭제 |
 | PATCH | `/api/items/{id}` | 상품 수정 |
 
+### 요청/응답 DTO 정리
+
+| Method | URL | 요청 DTO | 응답 DTO | 설명 |
+| --- | --- | --- | --- | --- |
+| GET | /api/orders | 없음 | List | 전제 주문 목록을 조회 |
+| POST | /api/orders | OrderRequestDto | integer | 클라이언트가 주문 시 주문 생성 |
+| GET | /api/members | 없음 | List | 전체 회원 목록을 조회 |
+| POST | /api/members | MemberDto | integer | 회원정보를 입력 받아 저장 |
+| GET | /api/items | 없음 | List | 등록된 전체 상품목록을 조회 |
+| POST | /api/items | BookDto | integer | 상품정보를 입력 받아 저장 |
+| PATCH | /api/orders/{id}/cancel | 없음 | string | 주문 ID로 취소 |
+| DELETE | /api/members/{id} | 없음 | string | 회원 ID로 회원 삭제 |
+| PATCH | /api/members/{id} | MemberUpdateDto | string | 회원 정보를 수정 |
+| GET | /api/items/{id} | 없음 | BookDto | 하나의 주문 목록만 조회 |
+| DELETE | /api/items/{id} | 없음 | string | 상품 ID로 상품을 삭제 |
+| PATCH | /api/items/{id} | BookDto | string | 상품정보를 수정 |
+| GET | /api/orders/{id} | 없음 | OrderResponseDto | 주문 정보 상세 확인 |
 --- 
 
 ## 🧩 주요 기능 / 시연 이미지
