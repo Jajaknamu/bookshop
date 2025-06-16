@@ -1,0 +1,38 @@
+server:
+  port: 8085
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/bookshop
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+#jdbc:h2:tcp://localhost/~/jpashoptest
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        show_sql: true #시스템 아웃으로 출력됨 -> 사용 지양
+        format_sql: true
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+logging:
+  level:
+    org.hibernate.sql: debug #로거를 통해서 출력하는게 좋음
+    org.hibernate.orm.jdbc.bind: trace

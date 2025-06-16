@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+  <!-- 수정 form -->
+  <form id="updateForm" th:object="${form}" enctype="multipart/form-data">
+    <!-- id와 기존 이미지명 -->
+    <input type="hidden" th:field="*{id}" id="itemId"/>
+    <input type="hidden" name="imageName" th:value="*{imageName}" />
+
+    <div class="form-group">
+      <label>상품명</label>
+      <input type="text" th:field="*{name}" class="form-control" id="name"/>
+    </div>
+    <div class="form-group">
+      <label>가격</label>
+      <input type="number" th:field="*{price}" class="form-control" id="price"/>
+    </div>
+    <div class="form-group">
+      <label>수량</label>
+      <input type="number" th:field="*{stockQuantity}" class="form-control" id="stockQuantity"/>
+    </div>
+    <div class="form-group">
+      <label>저자</label>
+      <input type="text" th:field="*{author}" class="form-control" id="author"/>
+    </div>
+    <div class="form-group">
+      <label>ISBN</label>
+      <input type="text" th:field="*{isbn}" class="form-control" id="isbn"/>
+    </div>
+
+    <!-- 기존 이미지 보여주기 -->
+    <div class="mb-2">
+      <img th:if="${form.imageName != null}" th:src="@{'/images/' + ${form.imageName}}" alt="기존 이미지" width="100"/>
+    </div>
+
+    <!-- 새 이미지 업로드 -->
+    <div class="form-group">
+      <label>새 이미지 (선택)</label>
+      <input type="file" name="imageFile" class="form-control"/>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">수정</button>
+  </form>
+
+  <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- 수정 요청 AJAX -->
+<script>
+  $("#updateForm").submit(function (e) {
+    e.preventDefault();
+
+    const form = $("#updateForm")[0];
+    const formData = new FormData(form);
+    const itemId = $("#itemId").val();
+
+    $.ajax({
+      url: `/items/${itemId}/edit`,
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function () {
+        alert("수정 완료!");
+        window.location.href = "/admin/items";
+      },
+      error: function () {
+        alert("수정 실패!");
+      }
+    });
+  });
+</script>
+</body>
+</html>

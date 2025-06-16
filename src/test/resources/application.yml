@@ -1,0 +1,23 @@
+#spring:
+#  datasource:
+#    url: jdbc:h2:mem:testdb //메모리에서 db 실행 하는것. 어플리케이션 종료하면 다 사라짐
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+
+#    properties:
+#      hibernate:
+#        show_sql: true #시스템 아웃으로 출력됨 -> 사용 지양
+#        format_sql: true
+
+# 스프링 부트는 별도의 설정이 없으면 메모리모드로 자동 실행됨
+
+
+logging:
+  level:
+    org.hibernate.sql: debug #로거를 통해서 출력하는게 좋음
+    org.hibernate.orm.jdbc.bind: trace

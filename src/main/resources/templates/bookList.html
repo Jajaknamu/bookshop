@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>홈 화면</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .book-card img {
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .book-title {
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+        }
+        .book-card {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<script th:inline="javascript">
+    // 로그인 여부를 Thymeleaf에서 JS로 전달
+    const isLoggedIn = [[${session.loginMember != null}]];
+</script>
+
+<!-- 상단 네비게이션 분리된 fragment 사용 -->
+<div th:replace="fragments/homeHeader :: homeHeader"></div>
+
+<!-- 본문 -->
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4">책 목록</h2>
+    <div class="row" id="book-list">
+        <!-- Ajax로 동적 추가 -->
+
+    </div>
+</div>
+
+<!-- JS: jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        //페이지 로드 완료 후 ajax 요청 실행
+        $.ajax({
+            url: "/api/items", // 서버에서 책 목록을 가져올 API 엔드포인트
+            method: "GET",
+            success: function (books) {
+                const bookList = $("#book-list"); // DOM에서 책 카드 삽입할 div 선택
+
+                // 서버에서 받아온 책 배열 순회
+                books.forEach(book => {
+                    // 이미지 파일명이 있으면 해당 이미지, 없으면 기본 이미지로 설정
+                    const imagePath = book.imageName ? `/images/${book.imageName}` : `/images/default-book.jpg`;
+                    // 한 권의 책을 나타내는 카드 HTML 생성
+                    const card = `
+            <div class="col-md-3 mb-4">
+                <a href="/items/${book.id}" class="text-decoration-none text-dark">
+                    <div class="card book-card h-100" data-id="${book.id}">
+                        <img src="${imagePath}" class="card-img-top" alt="book image">
+                        <div class="card-body p-2">
+                            <p class="book-title">${book.name}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        `;
+                    // 생성된 HTML을 #book-list 요소에 추가
+                    bookList.append(card);
+                });
+            },
+            error: function () {
+                alert("책 목록을 불러오는 데 실패했습니다.");
+            }
+        });
+        // 클릭 이벤트 핸들링 - 로그인 여부에 따라 분기
+        $(document).on("click", ".book-card", function (event) {
+            event.preventDefault(); //브라우저의 기본 클릭 동작 막기
+            event.stopPropagation(); // 상위 요소로의 이벤트 전파 차단
+
+            const bookId = $(this).data("id");
+
+            if (isLoggedIn) {
+                // 로그인 되어 있으면 상세 페이지 이동
+                window.location.href = `/items/${bookId}`;
+            } else {
+                // 로그인 안 되어 있으면 알림창만
+                alert("로그인 해주세요.");
+                window.location.href = ``;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

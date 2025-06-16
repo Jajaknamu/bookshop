@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>BookShop - 로그인</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .login-form-container {
+      max-width: 400px; /* 폼의 최대 너비 제한 */
+    }
+  </style>
+</head>
+<body>
+<!--상단 네비게이션-->
+<div th:replace="fragments/homeHeader :: homeHeader"></div>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <!-- 로그인 폼 카드 -->
+  <div class="login-form-container w-100 p-4 shadow rounded bg-white">
+    <h2 class="mb-4 text-center">로그인</h2>
+
+    <form th:action="@{/login}" method="post" th:object="${loginForm}">
+      <div class="mb-3">
+        <label class="form-label">이름</label>
+        <input type="text" th:field="*{name}" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">비밀번호</label>
+        <input type="password" th:field="*{password}" class="form-control" required>
+      </div>
+
+      <!-- 로그인 실패 시 에러 메시지 표시 -->
+      <div th:if="${loginError}" class="alert alert-danger" th:text="${loginError}"></div>
+
+      <button type="submit" class="btn btn-primary w-100">로그인</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
