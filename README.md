@@ -28,6 +28,37 @@
 | **Testing**         |JUnit                                                                  |
 
 --- 
+# 주요 API 엔드포인트 목록
+
+### 📌 Order API
+
+| Method | URL | 설명 |
+| --- | --- | --- |
+| GET | `/api/orders` | 주문 목록 조회 |
+| POST | `/api/orders` | 주문 생성 |
+| PATCH | `/api/orders/{id}/cancel` | 주문 취소 |
+| GET | `/api/orders/{id}` | 주문 상세 |
+
+### 📌 Member API
+
+| Method | URL | 설명 |
+| --- | --- | --- |
+| GET | `/api/members` | 회원 목록 조회 |
+| POST | `/api/members` | 회원등록 |
+| DELETE | `/api/members/{id}` | 회원삭제 |
+| PATCH | `/api/members/{id}` | 회원 수정 |
+
+### 📌 Item API
+
+| Method | URL | 설명 |
+| --- | --- | --- |
+| GET | `/api/items` | 모든 상품 조회 |
+| POST | `/api/items` | 상품 등록 |
+| GET | `/api/items/{id}` | 상품 단건 조회 |
+| DELETE | `/api/items/{id}` | 상품 삭제 |
+| PATCH | `/api/items/{id}` | 상품 수정 |
+
+--- 
 
 ## 🧩 주요 기능 / 시연 이미지
 
