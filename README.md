@@ -1,19 +1,16 @@
-# 📚 BookShop (사이드 프로젝트)
+# 📚 BookShop - 주문 관리 시스템 (RESTful API 프로젝트)
 
-> 간단한 상품 주문 사이트 -> 스프링 부트 + 스프링 데이터 JPA + RESTful API
+**Java / Spring Boot / Spring Data JPA / REST API 기반 사이드 프로젝트**
 
 > 📬 이메일: heyfer6867@gmail.com  
-> 💼 포트폴리오: https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link
---- 
+> 💼 [포트폴리오 자세히 보기 (Notion)](https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link)
 
 ## 💡 프로젝트 소개
-`실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발` 강의를 참고하여 만든 프로젝트입니다.  
-스프링부트와 RESTful API 구조로 주문 흐름에 대한 이해를 목표로 하며, 도서 등록, 주문, 회원 관리 등 전반적인 웹 애플리케이션의 기능을 백엔드 중심으로 구현했습니다.
+> `실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발` 강의를 참고하여 만든 프로젝트입니다.  
+> 상품 주문 흐름을 백엔드 중심으로 구현하고 RESTful 설계 패턴과 JPA 연관관계 매핑을 실습하기 위해 제작했습니다.
 
-## ⏱️개발 기간
-- **2025.04.07 ~ 04.27**
 
-- ## ⚙️ 개발 환경 및 기술 스택
+## ⚙️ 개발 환경 및 기술 스택
 
 | Category            | Stack                                                                 |
 |-----------------    |-----------------------------------------------------------------------|
@@ -27,55 +24,52 @@
 | **Tools**           | Git, GitHub                                                           |
 | **Testing**         |JUnit                                                                  |
 
---- 
-# 주요 API 엔드포인트 목록
+## 🧩 핵심 기능
 
-### 📌 Order API
+- 회원가입 / 로그인 / 주문 내역 확인
+- 상품 등록, 수정, 삭제 (관리자 전용)
+- 주문 생성 / 취소 + 재고 수량 반영
+- REST API 기반 CRUD 구현
 
-| Method | URL | 설명 |
-| --- | --- | --- |
-| GET | `/api/orders` | 주문 목록 조회 |
-| POST | `/api/orders` | 주문 생성 |
-| PATCH | `/api/orders/{id}/cancel` | 주문 취소 |
-| GET | `/api/orders/{id}` | 주문 상세 |
+## 🧾 API 명세서
 
-### 📌 Member API
+### 간단 요약
 
-| Method | URL | 설명 |
-| --- | --- | --- |
-| GET | `/api/members` | 회원 목록 조회 |
-| POST | `/api/members` | 회원등록 |
-| DELETE | `/api/members/{id}` | 회원삭제 |
-| PATCH | `/api/members/{id}` | 회원 수정 |
+| Method   | URL                       | 요청 DTO            | 응답 DTO                   | 설명          |
+| -------- | ------------------------- | ----------------- | ------------------------ | ----------- |
+| `GET`    | `/api/orders`             | 없음                | `List<OrderResponseDto>` | 전체 주문 목록 조회 |
+| `POST`   | `/api/orders`             | `OrderRequestDto` | `Long` (주문 ID)           | 주문 생성       |
+| `PATCH`  | `/api/orders/{id}/cancel` | 없음                | `String`                 | 주문 취소       |
+| `GET`    | `/api/orders/{id}`        | 없음                | `OrderResponseDto`       | 주문 상세 조회    |
+|          |                           |                     |                          |                  |
+| `GET`    | `/api/members`            | 없음                | `List<MemberDto>`        | 전체 회원 목록 조회 |
+| `POST`   | `/api/members`            | `MemberDto`       | `Long` (회원 ID)           | 회원 등록       |
+| `PATCH`  | `/api/members/{id}`       | `MemberUpdateDto` | `String`                 | 회원 정보 수정    |
+| `DELETE` | `/api/members/{id}`       | 없음                | `String`                 | 회원 삭제       |
+|          |                           |                     |                          |                 |
+| `GET`    | `/api/items`              | 없음                | `List<BookDto>`          | 전체 상품 목록 조회 |
+| `POST`   | `/api/items`              | `BookDto`         | `Long` (상품 ID)           | 상품 등록       |
+| `GET`    | `/api/items/{id}`         | 없음                | `BookDto`                | 상품 상세 조회    |
+| `PATCH`  | `/api/items/{id}`         | `BookDto`         | `String`                 | 상품 수정       |
+| `DELETE` | `/api/items/{id}`         | 없음                | `String`                 | 상품 삭제       |
 
-### 📌 Item API
+➡️ [📑 API 상세 명세 보기 (Markdown 파일)]()
 
-| Method | URL | 설명 |
-| --- | --- | --- |
-| GET | `/api/items` | 모든 상품 조회 |
-| POST | `/api/items` | 상품 등록 |
-| GET | `/api/items/{id}` | 상품 단건 조회 |
-| DELETE | `/api/items/{id}` | 상품 삭제 |
-| PATCH | `/api/items/{id}` | 상품 수정 |
 
-### 요청/응답 DTO 정리
+## 🗂️ 디렉토리 구조 (요약)
 
-| Method | URL | 요청 DTO | 응답 DTO | 설명 |
-| --- | --- | --- | --- | --- |
-| GET | /api/orders | 없음 | List | 전제 주문 목록을 조회 |
-| POST | /api/orders | OrderRequestDto | integer | 클라이언트가 주문 시 주문 생성 |
-| GET | /api/members | 없음 | List | 전체 회원 목록을 조회 |
-| POST | /api/members | MemberDto | integer | 회원정보를 입력 받아 저장 |
-| GET | /api/items | 없음 | List | 등록된 전체 상품목록을 조회 |
-| POST | /api/items | BookDto | integer | 상품정보를 입력 받아 저장 |
-| PATCH | /api/orders/{id}/cancel | 없음 | string | 주문 ID로 취소 |
-| DELETE | /api/members/{id} | 없음 | string | 회원 ID로 회원 삭제 |
-| PATCH | /api/members/{id} | MemberUpdateDto | string | 회원 정보를 수정 |
-| GET | /api/items/{id} | 없음 | BookDto | 하나의 주문 목록만 조회 |
-| DELETE | /api/items/{id} | 없음 | string | 상품 ID로 상품을 삭제 |
-| PATCH | /api/items/{id} | BookDto | string | 상품정보를 수정 |
-| GET | /api/orders/{id} | 없음 | OrderResponseDto | 주문 정보 상세 확인 |
---- 
+```bash
+📦 src
+ ┣ 📂main
+ ┃ ┣ 📂controller     → REST API 컨트롤러
+ ┃ ┣ 📂domain         → 엔티티 및 도메인 로직
+ ┃ ┣ 📂repository     → JPA Repository
+ ┃ ┣ 📂service        → 핵심 비즈니스 로직
+ ┃ ┣ 📂dto            → 요청/응답 DTO
+ ┃ ┣ 📂config         → 설정 클래스(Spring 설정 등)
+ ┗ 📂test             → 단위 테스트
+
+``` 
 
 ## 🧩 주요 기능 / 시연 이미지
 
