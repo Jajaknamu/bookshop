@@ -3,7 +3,7 @@
 **Java / Spring Boot / Spring Data JPA / REST API 기반 사이드 프로젝트**
 
 > 📬 이메일: heyfer6867@gmail.com  
-> 💼 [포트폴리오 자세히 보기 (Notion)](https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link)
+> 💼 포트폴리오: [자세히 보기 (Notion)](https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link)
 
 ## 💡 프로젝트 소개
 > `실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발` 강의를 참고하여 만든 프로젝트입니다.  
@@ -53,7 +53,7 @@
 | `PATCH`  | `/api/items/{id}`         | `BookDto`         | `String`                 | 상품 수정       |
 | `DELETE` | `/api/items/{id}`         | 없음                | `String`                 | 상품 삭제       |
 
-➡️ [📑 API 상세 명세 보기 (Markdown 파일)]()
+➡️ [📑 API 상세 명세 보기 (Notion)](https://unique-income-725.notion.site/BookShop-API-214dee6a325180abba7bfe1c49af9e8e?source=copy_link)
 
 
 ## 🗂️ 디렉토리 구조 (요약)
@@ -61,15 +61,26 @@
 ```bash
 📦 src
  ┣ 📂main
+ ┃ ┣ 📂config         → 설정 클래스(Spring 설정 등)
  ┃ ┣ 📂controller     → REST API 컨트롤러
  ┃ ┣ 📂domain         → 엔티티 및 도메인 로직
+ ┃ ┣ 📂dto            → 요청/응답 DTO
+ ┃ ┣ 📂exception      → 예외 처리
  ┃ ┣ 📂repository     → JPA Repository
  ┃ ┣ 📂service        → 핵심 비즈니스 로직
- ┃ ┣ 📂dto            → 요청/응답 DTO
- ┃ ┣ 📂config         → 설정 클래스(Spring 설정 등)
  ┗ 📂test             → 단위 테스트
-
 ``` 
+
+## 📌 프로젝트 목표 및 학습 포인트
+- JPA 연관관계 매핑 (단방향/양방향)
+- RESTful URL 설계 및 HTTP 메서드 활용
+- Controller-Service-Repository 계층 분리
+- 요청/응답 DTO 사용 및 API 명세화
+
+
+## 📎 기타 참고
+- API 문서화는 Swagger 사용 → 아직 자동화까지는 사용x, Markdown 수동 문서화
+- CI/CD, 배포는 포함되지 않음 (추후 EC2 + Docker 목표)
 
 ## 🧩 주요 기능 / 시연 이미지
 
