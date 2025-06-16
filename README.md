@@ -85,7 +85,7 @@
 
 ## ✅ 시연 이미지
 
-> **회원가입, 주문 생성/취소, 상품 등록/수정/삭제** 등 자세한 시연 화면은 [노션 포트폴리오](https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link)에 포함되어 있습니다.
+> **회원가입, 주문 생성/취소, 상품 등록/수정/삭제** 등 자세한 시연 화면은 [노션 포트폴리오](https://www.notion.so/BookShop-1d2dee6a3251801caf76cca3b5dff517?pvs=97#1d7dee6a3251806da53ce7674a512ed7)에 포함되어 있습니다.
 
 > <img src=https://github.com/user-attachments/assets/37077734-1a70-4ce2-886c-da182db41c14 width="700"/>
 
