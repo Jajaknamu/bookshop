@@ -1,5 +1,4 @@
-# 📚 BookShop - 주문 관리 시스템 (RESTful API 프로젝트)
-
+# 📚 BookShop - 주문 관리 시스템
 **Java / Spring Boot / Spring Data JPA / REST API 기반 사이드 프로젝트**
 
 > 📬 이메일: heyfer6867@gmail.com  
