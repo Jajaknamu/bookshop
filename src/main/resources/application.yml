@@ -36,3 +36,8 @@ logging:
   level:
     org.hibernate.sql: debug #로거를 통해서 출력하는게 좋음
     org.hibernate.orm.jdbc.bind: trace
+
+iamport:
+  api:
+    key: "4043884514440450"
+    secret: "ZsWFe4bEBGzQa4oxH09ZS2yPsCMqrvPGmXQrcUkNBCTuA7liSYI5OrdUNX1Sbu9bq8XNHec4El21yRyh"

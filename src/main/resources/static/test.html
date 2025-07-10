@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>PortOne V2 결제 테스트</title>
+    <script src="https://cdn.portone.io/v2/browser-sdk.js" defer></script>
+</head>
+<body>
+<h1>테스트 상품</h1>
+<p>가격: 100원</p>
+<button type="button" onclick="requestPay()">결제하기</button>
+
+<script>
+    // PortOne 로딩 대기
+    function waitPortOneLoaded() {
+        return new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (window.PortOne) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+        });
+    }
+
+    // 전역에 결제 함수 등록
+    window.requestPay = async function () {
+        await waitPortOneLoaded();
+
+        function randomId() {
+            return [...crypto.getRandomValues(new Uint32Array(2))]
+                .map((word) => word.toString(16).padStart(8, "0"))
+                .join("");
+        }
+
+        const paymentId = randomId();
+
+        const payment = await PortOne.requestPayment({
+            storeId: "store-5290c2f9-b27d-4bf3-a88a-48717e658e5e", // 예: iamporttest_3
+            channelKey: "channel-key-4ea5e726-aaab-43e4-a936-1ea0c68bfa69", // 예: channel-key-xxxx...
+            paymentId: paymentId,
+            orderName: "테스트 상품",
+            totalAmount: 100,
+            currency: "KRW",
+            payMethod: "CARD",
+            redirectUrl: "https://8e0b6d606c26.ngrok-free.app/payment/success"
+        });
+
+        if (payment.code !== undefined) {
+            alert("결제 실패: " + payment.message);
+            return;
+        }
+
+        alert("결제 성공: imp_uid = " + payment.imp_uid);
+    };
+</script>
+</body>
+</html>
