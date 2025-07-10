@@ -38,8 +38,16 @@
 
 <!--</form>-->
 
+<!--변수 먼저 할당-->
+<script th:inline="javascript">
+    const bookId = [[${book.id}]];
+    const memberId = [[${loginMember.id}]];
+    const bookName = [[${book.name}]];
+    const bookPrice = [[${book.price}]];
+</script>
+
 <!--v2 버전 해보기-->
-<script>
+<script th:inline="javascript">
     // PortOne 로딩 대기
     function waitPortOneLoaded() {
         return new Promise((resolve) => {
@@ -62,17 +70,23 @@
                 .join("");
         }
 
+        const count = document.querySelector("input[name='count']").value;
         const paymentId = randomId();
 
         const payment = await PortOne.requestPayment({
             storeId: "store-5290c2f9-b27d-4bf3-a88a-48717e658e5e", // 예: iamporttest_3
             channelKey: "channel-key-4ea5e726-aaab-43e4-a936-1ea0c68bfa69", // 예: channel-key-xxxx...
             paymentId: paymentId,
-            orderName: "테스트 상품",
+            orderName: bookName,
             totalAmount: 100,
             currency: "KRW",
             payMethod: "CARD",
-            redirectUrl: "https://8e0b6d606c26.ngrok-free.app/payment/success"
+            redirectUrl: "https://8e0b6d606c26.ngrok-free.app/payment/success",
+            customData: {
+                itemId: bookId,
+                memberId: memberId,
+                count: count
+            }
         });
 
         if (payment.code !== undefined) {
@@ -80,7 +94,27 @@
             return;
         }
 
-        alert("결제 성공: imp_uid = " + payment.imp_uid);
+        // ✅ 결제 성공 시 서버에 검증 + 주문 생성 요청
+        /*try {
+            const response = await fetch("/api/payment/complete", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    paymentId: payment.paymentId
+                })
+            });
+
+            const result = await response.json();
+
+            alert("결제 및 주문 성공! 주문 ID: " + result.orderId);
+            location.href = "/orders"; // 주문 목록 페이지로 이동
+
+        } catch (err) {
+            alert("서버 요청 중 오류 발생: " + err);
+        }*/
+        alert("결제 성공: paymentId = " + payment.paymentId);
     };
 </script>
 
