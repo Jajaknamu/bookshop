@@ -30,15 +30,65 @@ public class PaymentVerificationService {
         // 1. access_token 발급
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            // 바디를 JSON 문자열로 직접 변환
+            Map<String, String> bodyMap = Map.of(
+                    "imp_key", apiKey,
+                    "imp_secret", apiSecret
+            );
+            String bodyJson = objectMapper.writeValueAsString(bodyMap);
+
+            HttpEntity<String> tokenReq = new HttpEntity<>(bodyJson, headers);
+
+            ResponseEntity<String> tokenRes = restTemplate.postForEntity(
+                    "https://api.iamport.kr/users/getToken",
+                    tokenReq,
+                    String.class
+            );
+
+            System.out.println("💬 요청 JSON = " + bodyJson);
+
+            JsonNode tokenBody = objectMapper.readTree(tokenRes.getBody());
+            String accessToken = tokenBody.get("response").get("access_token").asText();
+
+            // 2. 결제 조회
+            HttpHeaders payHeaders = new HttpHeaders();
+            payHeaders.setBearerAuth(accessToken);
+
+            HttpEntity<Void> payReq = new HttpEntity<>(payHeaders);
+            ResponseEntity<String> payRes = restTemplate.exchange(
+                    "https://api.iamport.kr/payments/" + paymentId,
+                    HttpMethod.GET,
+                    payReq,
+                    String.class
+            );
+
+            return objectMapper.readTree(payRes.getBody()).get("response");
+
+
+        } catch (Exception e) {
+            throw new RuntimeException("아임포트 서버 통신 오류: " + e.getMessage(), e);
+        }
+
+    }
+
+
+    /*public JsonNode verifyPayment(String paymentId) {
+
+        // 1. access_token 발급
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("imp_key", apiKey);
         requestBody.put("imp_secret", apiSecret);
         HttpEntity<Map<String, Object>> tokenReq = new HttpEntity<>(requestBody, headers);
 
-       /* HttpEntity<Map<String,String>> tokenReq = new HttpEntity<>(Map.of(
+       *//* HttpEntity<Map<String,String>> tokenReq = new HttpEntity<>(Map.of(
                 "imp_key" ,apiKey,
                 "imp_secret", apiSecret
-        ), headers);*/
+        ), headers);*//*
 
         ResponseEntity<String> tokenRes = restTemplate.postForEntity(
                 "https://api.iamport.kr/users/getToken", tokenReq, String.class
@@ -67,7 +117,7 @@ public class PaymentVerificationService {
         } catch (Exception e) {
             throw new RuntimeException("결제 조회 실패", e);
         }
-    }
+    }*/
 
     //api 키들 잘 가져오는지 로그로 확인용
     @PostConstruct

@@ -5,11 +5,13 @@ import com.bookshop.service.OrderService;
 import com.bookshop.service.PaymentVerificationService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/payment")
@@ -18,7 +20,34 @@ public class PaymentApiController {
     private final OrderService orderService;
 
     @PostMapping("/complete")
-    public ResponseEntity<?> completePayment(@RequestBody PaymentCompleteRequest request) {
+    public ResponseEntity<?> completePayment(@RequestBody Map<String, Object> payload) {
+        try {
+            //프론트에서 전달한 데이터 추출
+            String paymentId = (String) payload.get("paymentId");
+            Integer count = Integer.parseInt(payload.get("count").toString());
+            Long itemId = Long.parseLong(payload.get("itemId").toString());
+            Long memberId = Long.parseLong(payload.get("memberId").toString());
+
+            log.info("✅ 결제 완료. paymentId = {}", paymentId);
+            log.info("📦 주문 생성: itemId = {}, memberId = {}, count = {}", itemId, memberId, count);
+
+            //주문 생성 (기존 orderService 사용)
+            Long orderId = orderService.order(memberId, itemId, count);
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "OK",
+                    "orderId", orderId,
+                    "message", "주문이 성공적으로 생성되었습니다."
+            ));
+        } catch (Exception e) {
+            log.error("❌ 주문 생성 실패", e);
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "FAIL",
+                    "message", "주문 생성 중 오류 발생"
+            ));
+        }
+
+/*
 
         JsonNode paymentInfo = paymentVerificationService.verifyPayment(request.getPaymentId());
 
@@ -48,6 +77,6 @@ public class PaymentApiController {
                 "amount",paidAmount,
                 "orderId",orderId
 
-        ));
+        ));*/
     }
 }
