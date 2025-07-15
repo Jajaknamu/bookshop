@@ -94,27 +94,23 @@
             return;
         }
 
-        // ✅ 결제 성공 시 서버에 검증 + 주문 생성 요청
-        /*try {
+        //결제 성공후 서버에 결제 완료 및 주문 생성 요청
+        try {
             const response = await fetch("/api/payment/complete", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     paymentId: payment.paymentId
                 })
             });
-
             const result = await response.json();
-
             alert("결제 및 주문 성공! 주문 ID: " + result.orderId);
-            location.href = "/orders"; // 주문 목록 페이지로 이동
-
+            location.href = "/orders";
         } catch (err) {
-            alert("서버 요청 중 오류 발생: " + err);
-        }*/
-        alert("결제 성공: paymentId = " + payment.paymentId);
+            alert("서버 요청 실패: " + err);
+        }
     };
 </script>
 

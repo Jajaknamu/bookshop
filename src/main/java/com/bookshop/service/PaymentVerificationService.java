@@ -2,12 +2,14 @@ package com.bookshop.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -28,12 +30,18 @@ public class PaymentVerificationService {
         // 1. access_token 발급
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String,String>> tokenReq = new HttpEntity<>(Map.of(
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("imp_key", apiKey);
+        requestBody.put("imp_secret", apiSecret);
+        HttpEntity<Map<String, Object>> tokenReq = new HttpEntity<>(requestBody, headers);
+
+       /* HttpEntity<Map<String,String>> tokenReq = new HttpEntity<>(Map.of(
                 "imp_key" ,apiKey,
                 "imp_secret", apiSecret
-        ), headers);
+        ), headers);*/
+
         ResponseEntity<String> tokenRes = restTemplate.postForEntity(
-                "https://api.iamport.kt/users/getToken", tokenReq, String.class
+                "https://api.iamport.kr/users/getToken", tokenReq, String.class
         );
         String accessToken;
         try {
@@ -59,7 +67,11 @@ public class PaymentVerificationService {
         } catch (Exception e) {
             throw new RuntimeException("결제 조회 실패", e);
         }
-
-
     }
+
+    //api 키들 잘 가져오는지 로그로 확인용
+    @PostConstruct
+    public void checkKeys() {
+        System.out.println("⚠️ [IAMPORT KEY] = " + apiKey);
+        System.out.println("⚠️ [IAMPORT SECRET] = " + apiSecret);    }
 }

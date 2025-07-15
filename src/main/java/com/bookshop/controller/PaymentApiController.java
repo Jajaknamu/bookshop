@@ -43,16 +43,11 @@ public class PaymentApiController {
         Long orderId = orderService.order(memberId, itemId, count);
         System.out.println("주문 생성 완료: orderId = " + orderId);
 
-
-
         return ResponseEntity.ok(Map.of(
                 "status", "PAID",
                 "amount",paidAmount,
                 "orderId",orderId
 
         ));
-
-
     }
-
 }
