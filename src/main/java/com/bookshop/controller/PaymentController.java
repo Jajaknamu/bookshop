@@ -1,3 +1,4 @@
+/*
 package com.bookshop.controller;
 
 import com.bookshop.domain.item.Item;
@@ -47,10 +48,13 @@ public class PaymentController {
 
         return "payment/success"; //템플릿으로 forward
 
-       /* return ResponseEntity.ok(Map.of(
+       */
+/* return ResponseEntity.ok(Map.of(
                 "result", "success",
                 "orderId", orderId,
                 "amount", paidAmount
-        ));*/
+        ));*//*
+
     }
 }
+*/

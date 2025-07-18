@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title th:text="${book.name}">도서 상세</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.portone.io/v2/browser-sdk.js" defer></script>
+    <!-- SDK 추가 -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
 </head>
 <body class="container mt-5">
 
@@ -29,92 +30,68 @@
 
     <div class="mb-3">
         <label class="form-label">주문 수량</label>
-        <input type="number" name="count" class="form-control" value="1" min="1" required />
+        <input id="payment-button" type="number" name="count" class="form-control" value="1" min="1" required />
     </div>
 
     <!--결제 버튼-->
-<button type="button" onclick="requestPay()" class="btn btn-primary">결제하기</button>
+<button type="button" onclick="requestPayment()()" class="btn btn-primary">결제하기</button>
 <!--<button type="submit" class="btn btn-primary">주문하기</button>-->
 
 <!--</form>-->
 
-<!--변수 먼저 할당-->
 <script th:inline="javascript">
     const bookId = [[${book.id}]];
-    const memberId = [[${loginMember.id}]];
     const bookName = [[${book.name}]];
     const bookPrice = [[${book.price}]];
+    const memberId = [[${loginMember.id}]];
 </script>
 
-<!--v2 버전 해보기-->
+
 <script th:inline="javascript">
-    // PortOne 로딩 대기
-    function waitPortOneLoaded() {
-        return new Promise((resolve) => {
-            const check = setInterval(() => {
-                if (window.PortOne) {
-                    clearInterval(check);
-                    resolve();
-                }
-            }, 100);
-        });
-    }
+    // ------  SDK 초기화 ------
+    // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
+    const clientKey = "test_ck_0RnYX2w532o7od6ap7plVNeyqApQ";
+    const customerKey = "-jm31h8b78N1QVEiFstgy";
+    const tossPayments = TossPayments(clientKey);
+    // 회원 결제
+    // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentspayment
+    const payment = tossPayments.payment({ customerKey });
+    // 비회원 결제
+    // const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
 
-    // 전역에 결제 함수 등록
-    window.requestPay = async function () {
-        await waitPortOneLoaded();
-
-        function randomId() {
-            return [...crypto.getRandomValues(new Uint32Array(2))]
-                .map((word) => word.toString(16).padStart(8, "0"))
-                .join("");
-        }
+    // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+    // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
+    async function requestPayment() {
 
         const count = document.querySelector("input[name='count']").value;
-        const paymentId = randomId();
+        const totalAmount = bookPrice * count;
 
-        const payment = await PortOne.requestPayment({
-            storeId: "store-5290c2f9-b27d-4bf3-a88a-48717e658e5e", // 예: iamporttest_3
-            channelKey: "channel-key-4ea5e726-aaab-43e4-a936-1ea0c68bfa69", // 예: channel-key-xxxx...
-            paymentId: paymentId,
+        const orderId = `${memberId}-${Date.now()}`; // 고유한 주문 ID
+
+        // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+        // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+        await payment.requestPayment({
+            method: "CARD", // 카드 결제
+            amount: {
+                currency: "KRW",
+                value: totalAmount,
+            },
+            orderId: orderId, // 고유 주문번호
             orderName: bookName,
-            totalAmount: 100,
-            currency: "KRW",
-            payMethod: "CARD",
-            redirectUrl: "https://8e0b6d606c26.ngrok-free.app/payment/success",
-            customData: {
-                itemId: bookId,
-                memberId: memberId,
-                count: count
-            }
+            successUrl: `${window.location.origin}/api/payments/success?memberId=${memberId}&itemId=${bookId}&count=${count}`,
+            failUrl: `${window.location.origin}/api/payments/fail`,
+            customerEmail: "customer123@gmail.com",
+            customerName: "김토스",
+            customerMobilePhone: "01012341234",
+            // 카드 결제에 필요한 정보
+            card: {
+                useEscrow: false,
+                flowMode: "DEFAULT", // 통합결제창 여는 옵션
+                useCardPoint: false,
+                useAppCardOnly: false,
+            },
         });
-
-        if (payment.code !== undefined) {
-            alert("결제 실패: " + payment.message);
-            return;
-        }
-
-        //결제 성공후 서버에 결제 완료 및 주문 생성 요청
-        try {
-            const response = await fetch("/api/payment/complete", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    paymentId: payment.paymentId,
-                    itemId: bookId,
-                    memberId: memberId,
-                    count: count
-                })
-            });
-            const result = await response.json();
-            alert("결제 및 주문 성공! 주문 ID: " + result.orderId);
-            location.href = "/orders";
-        } catch (err) {
-            alert("서버 요청 실패: " + err);
-        }
-    };
+    }
 </script>
 
 </body>
@@ -237,3 +214,98 @@
         location.href = "/orders";
     };
 </script>-->
+
+<!-- 포트원 결제 폐기
+
+&lt;!&ndash;변수 먼저 할당&ndash;&gt;
+<script th:inline="javascript">
+    const bookId = [[${book.id}]];
+    const memberId = [[${loginMember.id}]];
+    const bookName = [[${book.name}]];
+    const bookPrice = [[${book.price}]];
+</script>
+
+&lt;!&ndash;v2 버전 해보기&ndash;&gt;
+<script th:inline="javascript">
+    // PortOne 로딩 대기
+    function waitPortOneLoaded() {
+        return new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (window.PortOne) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+        });
+    }
+
+    // 전역에 결제 함수 등록
+    window.requestPay = async function () {
+
+        await waitPortOneLoaded();
+
+        function randomId() {
+            return [...crypto.getRandomValues(new Uint32Array(2))]
+                .map((word) => word.toString(16).padStart(8, "0"))
+                .join("");
+        }
+
+        const count = document.querySelector("input[name='count']").value;
+        const paymentId = randomId();
+
+        const payment = await PortOne.requestPayment({
+            storeId: "store-5290c2f9-b27d-4bf3-a88a-48717e658e5e", // 예: iamporttest_3
+            channelKey: "channel-key-4ea5e726-aaab-43e4-a936-1ea0c68bfa69", // 예: channel-key-xxxx...
+            paymentId: paymentId,
+            orderName: bookName,
+            totalAmount: bookPrice * count,
+            currency: "KRW",
+            payMethod: "CARD",
+            // redirectUrl: "https://8e0b6d606c26.ngrok-free.app/payment/success",
+            customData: {
+                itemId: bookId,
+                memberId: memberId,
+                count: count
+            }
+        });
+
+        // ✅ 응답 무조건 로그 출력
+        console.log("📦 PortOne 응답 전체 ↓↓↓");
+        console.log(payment);
+
+        if (payment.code !== undefined) {
+            alert("결제 실패: " + payment.message);
+            return;
+        }
+// 🚨 디버깅을 위한 추가 로그: 서버로 보낼 데이터 확인
+        const dataToSend = {
+            paymentId: payment.paymentId, // <&#45;&#45; 이 부분이 수정되었는지 다시 확인
+            itemId: bookId,
+            memberId: memberId,
+            count: count
+        };
+        console.log("👉 서버로 전송할 페이로드:", JSON.stringify(dataToSend)); // 전송될 JSON 문자열 확인
+
+        //결제 성공후 서버에 결제 완료 및 주문 생성 요청
+        try {
+            const response = await fetch("/api/payment/complete", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    paymentId: payment.paymentId,
+                    itemId: bookId,
+                    memberId: memberId,
+                    count: count
+                })
+            });
+            const result = await response.json();
+            alert("결제 및 주문 성공! 주문 ID: " + result.orderId);
+            location.href = "/orders";
+        } catch (err) {
+            alert("서버 요청 실패: " + err);
+        }
+    };
+</script>
+-->

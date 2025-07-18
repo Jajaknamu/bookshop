@@ -1,5 +1,8 @@
 package com.bookshop.service;
 
+import com.bookshop.domain.Payment;
+import com.bookshop.dto.PaymentVerificationResult;
+import com.bookshop.repository.PaymentRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -7,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +22,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final PaymentRepository paymentRepository;
+
+    @Transactional
+    public Payment savePayment(Payment payment) {
+        return paymentRepository.save(payment);
+    }
+
+
+    /*private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${iamport.api.key}")
@@ -70,6 +83,6 @@ public class PaymentService {
         } catch (Exception e) {
             throw new RuntimeException("결제 조회 실패", e);
         }
-    }
+    }*/
 
 }

@@ -1,82 +1,90 @@
 package com.bookshop.controller;
 
+import com.bookshop.domain.Payment;
 import com.bookshop.dto.PaymentCompleteRequest;
-import com.bookshop.service.OrderService;
-import com.bookshop.service.PaymentVerificationService;
+import com.bookshop.dto.PaymentVerificationResult;
+import com.bookshop.service.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/payment")
+@RequestMapping("/api/payments")
 public class PaymentApiController {
-    private final PaymentVerificationService paymentVerificationService;
-    private final OrderService orderService;
 
-    @PostMapping("/complete")
-    public ResponseEntity<?> completePayment(@RequestBody Map<String, Object> payload) {
+//    private final PaymentVerificationService paymentVerificationService; // 아임포트 검증용
+    private final TossPaymentService tossPaymentService;
+    private final PaymentService paymentService; //결제 내역 저장용
+    private final OrderService orderService; // 주문 생성용
+    private final ItemService itemService;
+
+
+    /**
+     * ✅ Toss 결제 성공 콜백 처리
+     * Toss에서 결제 성공 시 redirect 되는 주소에서 결제 검증 및 주문 생성 처리
+     */
+    @GetMapping("/success")
+    public ResponseEntity<?> paymentSuccess(@RequestParam String paymentKey,
+                                            @RequestParam String orderId,
+                                            @RequestParam int amount,
+                                            @RequestParam Long memberId,
+                                            @RequestParam Long itemId,
+                                            @RequestParam int count) {
+        log.info("✅ Toss 결제 성공 콜백 진입");
+
         try {
-            //프론트에서 전달한 데이터 추출
-            String paymentId = (String) payload.get("paymentId");
-            Integer count = Integer.parseInt(payload.get("count").toString());
-            Long itemId = Long.parseLong(payload.get("itemId").toString());
-            Long memberId = Long.parseLong(payload.get("memberId").toString());
+            log.info("✅ [결제 성공 콜백] paymentKey={}, orderId={}, amount={}", paymentKey, orderId, amount);
 
-            log.info("✅ 결제 완료. paymentId = {}", paymentId);
-            log.info("📦 주문 생성: itemId = {}, memberId = {}, count = {}", itemId, memberId, count);
+            // 1. Toss 서버에 결제 검증 요청
+            tossPaymentService.verifyPayment(paymentKey, orderId, amount);
+            log.info("✅ Toss 결제 검증 완료");
 
-            //주문 생성 (기존 orderService 사용)
-            Long orderId = orderService.order(memberId, itemId, count);
+            // 2. 주문 생성
+            Long orderIdResult = orderService.order(memberId, itemId, count);
+            log.info("🛒 주문 생성 완료: orderId={}", orderIdResult);
 
+            // 3. 결제 내역 저장
+            Payment payment = new Payment();
+            payment.setImpUid(paymentKey);  // Toss에서는 paymentKey를 unique ID처럼 사용
+            payment.setMerchantUid(orderId);
+            payment.setAmount(amount);
+            payment.setStatus("paid");
+            payment.setMemberId(memberId);
+            payment.setItemId(itemId);
+            payment.setCount(count);
+            paymentService.savePayment(payment);
+
+            // 4. 응답 반환
             return ResponseEntity.ok(Map.of(
                     "status", "OK",
-                    "orderId", orderId,
-                    "message", "주문이 성공적으로 생성되었습니다."
+                    "orderId", orderIdResult,
+                    "message", "결제가 정상적으로 완료되었습니다."
             ));
         } catch (Exception e) {
-            log.error("❌ 주문 생성 실패", e);
+            log.error("❌ 결제 처리 실패", e);
             return ResponseEntity.badRequest().body(Map.of(
                     "status", "FAIL",
-                    "message", "주문 생성 중 오류 발생"
+                    "message", e.getMessage()
             ));
         }
+    }
 
-/*
-
-        JsonNode paymentInfo = paymentVerificationService.verifyPayment(request.getPaymentId());
-
-        int paidAmount = paymentInfo.get("amount").asInt();
-        String status = paymentInfo.get("status").asText();
-
-        if (!"paid".equals(status)) {
-            return ResponseEntity.badRequest().body("결제 상태가 유효하지 않습니다: " + status);
-        }
-
-        JsonNode customData = paymentInfo.get("custom_data");
-        long itemId = customData.get("itemId").asLong();
-        long memberId = customData.get("memberId").asLong();
-        int count = customData.get("count").asInt();
-        System.out.println("customData: " + customData.toString());
-
-        System.out.println("=== 결제 완료 요청 도착 ===");
-        System.out.println("paymentId: " + request.getPaymentId());
-        System.out.println("검증 결과: " + paymentInfo.toString());
-
-        //주문 생성
-        Long orderId = orderService.order(memberId, itemId, count);
-        System.out.println("주문 생성 완료: orderId = " + orderId);
-
-        return ResponseEntity.ok(Map.of(
-                "status", "PAID",
-                "amount",paidAmount,
-                "orderId",orderId
-
-        ));*/
+    /**
+     * ⛔️ 실패 시 콜백
+     */
+    @GetMapping("/fail")
+    public ResponseEntity<?> paymentFail(@RequestParam Map<String, String> params) {
+        log.warn("❌ 결제 실패 콜백: {}", params);
+        return ResponseEntity.badRequest().body(Map.of(
+                "status", "FAIL",
+                "reason", params.getOrDefault("message", "결제가 실패했습니다.")
+        ));
     }
 }

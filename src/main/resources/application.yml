@@ -37,6 +37,10 @@ logging:
     org.hibernate.sql: debug #로거를 통해서 출력하는게 좋음
     org.hibernate.orm.jdbc.bind: trace
 
+tossPayments:
+  clientKey: test_ck_0RnYX2w532o7od6ap7plVNeyqApQ
+  secretKey: test_sk_5OWRapdA8dG6N5Qao1wYro1zEqZK
+
 iamport:
   api:
     key: "4043884514440450"
