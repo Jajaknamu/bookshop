@@ -78,7 +78,8 @@
             },
             orderId: orderId, // 고유 주문번호
             orderName: bookName,
-            successUrl: `${window.location.origin}/api/payments/success?memberId=${memberId}&itemId=${bookId}&count=${count}`,
+            successUrl: `${window.location.origin}/payments/view/success?` +
+                `memberId=${memberId}&itemId=${bookId}&count=${count}&orderId=${orderId}&amount=${totalAmount}`,
             failUrl: `${window.location.origin}/api/payments/fail`,
             customerEmail: "customer123@gmail.com",
             customerName: "김토스",

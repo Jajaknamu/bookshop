@@ -1,16 +1,12 @@
 package com.bookshop.controller;
 
 import com.bookshop.domain.Payment;
-import com.bookshop.dto.PaymentCompleteRequest;
-import com.bookshop.dto.PaymentVerificationResult;
 import com.bookshop.service.*;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j

@@ -2,20 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>결제 완료</title>
+  <title>결제 확인 중...</title>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentKey = urlParams.get("paymentKey");
+    const orderId = urlParams.get("orderId");
+    const amount = urlParams.get("amount");
+    const memberId = urlParams.get("memberId");
+    const itemId = urlParams.get("itemId");
+    const count = urlParams.get("count");
+
+    // ✅ 결제 완료 처리 fetch 후 화면 이동
+    fetch("/api/payments/success?" +
+            `paymentKey=${paymentKey}&orderId=${orderId}&amount=${amount}` +
+            `&memberId=${memberId}&itemId=${itemId}&count=${count}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === "OK") {
+                // 성공 시 주문 페이지로 이동
+                window.location.href = "/orders";
+              } else {
+                // 실패 시 메시지 띄우고 홈으로
+                alert("처리 실패: " + data.message);
+                window.location.href = "/";
+              }
+            })
+            .catch(err => {
+              alert("서버 요청 실패: " + err);
+              window.location.href = "/";
+            });
+  </script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container mt-5">
-
-<div class="text-center">
-  <h2 class="text-success mb-4">✅ 결제가 완료되었습니다!</h2>
-
-  <p><strong>주문 번호:</strong> <span th:text="${orderId}">12345</span></p>
-  <p><strong>결제 금액:</strong> <span th:text="${amount}">10000</span> 원</p>
-
-  <a href="/orders" class="btn btn-primary mt-4">주문 내역 보기</a>
-  <a href="/" class="btn btn-secondary mt-2">홈으로</a>
-</div>
-
+<body>
+<h2 class="text-center mt-5">결제 확인 중입니다. 잠시만 기다려주세요...</h2>
+<p>잠시만 기다려주세요.</p>
 </body>
 </html>
