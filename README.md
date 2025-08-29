@@ -119,3 +119,20 @@
     }
 ```
 
+## ➕프로젝트 확장 기능
+> 기존 주문 시스템에 실제 결제 기능을 확장하여 적용하였습니다.  
+> Toss Payments표준결체창(v2)를 활용하여 실제 토스앱으로 연동해 결제가능 및 취소 로직을 구현했습니다.
+
+### 결제 기능(TossPayments연동)
+- 결제 요청/승인: Toss SDK를 통한 결제창 호출 → 서버 API(/api/payments/success)에서 결제 검증 및 주문 생성
+- 주문-결제 연동: 결제 성공 시 OrderService.order() 호출로 주문 및 결제 내역 DB 저장
+- 결제 검증: Toss REST API를 통해 결제 금액/상태 검증 후 DB 반영
+- 결제 취소: 주문 취소 시 Toss 결제 취소 API 연동 → 실제 결제 취소 + DB 상태 업데이트
+  
+### 결제 및 취소 API
+| Method | URL                     | 설명                 |
+| ------ | ----------------------- | ------------------ |
+| POST   | `/api/payments/request` | 결제 요청              |
+| POST   | `/api/payments/success` | 결제 성공 후 검증 + 주문 생성 |
+| POST   | `/api/payments/cancel`  | 결제 취소 처리           |
+
