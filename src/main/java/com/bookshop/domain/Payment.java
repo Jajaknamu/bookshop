@@ -1,9 +1,6 @@
 package com.bookshop.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,4 +23,18 @@ public class Payment {
     private int count;
 
     private LocalDateTime paidAt; // 결제 일시
+
+    private LocalDateTime canceledAt; // 결제 취소 일시
+
+    // Order 연관관계 추가
+    @OneToOne(mappedBy = "payment") // Order에 정의된 필드명
+    private Order order;
+
+    public void setOrder(Order order) {
+        this.order = order;
+        //양방향 관계 자동 설정
+        if (order.getPayment() != this) {
+            order.setPayment(this);
+        }
+    }
 }

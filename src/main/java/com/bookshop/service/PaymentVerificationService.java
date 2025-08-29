@@ -1,3 +1,4 @@
+/*
 package com.bookshop.service;
 
 import com.bookshop.dto.PaymentCompleteRequest;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentVerificationService {
+public class PaymentVerificationService { //포트원 사용시 썼던 코드들
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -80,11 +81,13 @@ public class PaymentVerificationService {
         }
     }
 
-    /**
+    */
+/**
      * 아임포트 서버에서 결제 상세정보 조회
      * @param paymentId 아임포트 결제 고유번호 (PortOne V2에서는 paymentId)
      * @return 결제 상세정보 JSON
-     */
+     *//*
+
     public JsonNode verifyPayment(String paymentId) {
 
         String accessToken = getAccessToken(); // 분리된 메서드 호출
@@ -127,12 +130,14 @@ public class PaymentVerificationService {
         }
     }
 
-    /**
+    */
+/**
      * 아임포트로부터 결제 정보를 조회하고 상태 및 금액을 검증함
      * @param paymentId 아임포트 결제 고유 ID (PortOne V2에서는 paymentId)
      * @param expectedAmount 서버에서 계산한 기대 결제 금액
      * @return 검증된 결제 정보 DTO
-     */
+     *//*
+
     public PaymentVerificationResult  validateAndVerifyPayment(String paymentId, int expectedAmount) {
 
         //1. 결제정보 조회
@@ -200,12 +205,17 @@ public class PaymentVerificationService {
         System.out.println("⚠️ [IAMPORT SECRET] = " + apiSecret);
     }
 
+*/
 /*
-    *//**
+    *//*
+*/
+/**
      * 아임포트 서버에서 결제 상세정보 조회
      * @param paymentId 아임포트 결제 고유번호 (imp_uid)
      * @return 결제 상세정보 JSON
      *//*
+*/
+/*
     public JsonNode verifyPayment(String paymentId) {
 
         // 1. access_token 발급
@@ -257,12 +267,16 @@ public class PaymentVerificationService {
 
     }
 
-    *//**
+    *//*
+*/
+/**
      * 아임포트로부터 결제 정보를 조회하고 상태 및 금액을 검증함
      * @param paymentId 아임포트 결제 고유 ID (imp_uid)
      * @param expectedAmount 서버에서 계산한 기대 결제 금액
      * @return 검증된 결제 정보 DTO
      *//*
+*/
+/*
     public PaymentVerificationResult  validateAndVerifyPayment(String paymentId, int expectedAmount) {
 
         //1. 결제정보 조회
@@ -303,6 +317,8 @@ public class PaymentVerificationService {
     @PostConstruct
     public void checkKeys() {
         System.out.println("⚠️ [IAMPORT KEY] = " + apiKey);
-        System.out.println("⚠️ [IAMPORT SECRET] = " + apiSecret);    }*/
+        System.out.println("⚠️ [IAMPORT SECRET] = " + apiSecret);    }*//*
+
 
 }
+*/

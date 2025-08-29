@@ -1,21 +1,24 @@
 package com.bookshop.controller;
 
+import com.bookshop.domain.Payment;
+import com.bookshop.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import com.bookshop.domain.Member;
 import com.bookshop.domain.Order;
 import com.bookshop.domain.item.Item;
 import com.bookshop.repository.OrderSearch;
-import com.bookshop.service.ItemService;
-import com.bookshop.service.MemberService;
-import com.bookshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class OrderController {
@@ -23,6 +26,8 @@ public class OrderController {
     private final OrderService orderService;
     private final MemberService memberService;
     private final ItemService itemService;
+    private final PaymentService paymentService;
+    private final TossPaymentService tossPaymentService;
 
     //상품 주문 페이지 호출 -> 등록된 회원, 아이템 보여짐
     @GetMapping("/order")
@@ -61,7 +66,7 @@ public class OrderController {
 
         List<Order> orders;
 
-        //관리자는 전체 주문, 일반 사용자는 본인 주문만 확인가능
+        // 1. 주문 조회 (관리자 vs 일반 사용자)
         if ("ADMIN".equals(loginMember.getRole())) {
             orders = orderService.findOrders(orderSearch);
         } else {
@@ -69,13 +74,48 @@ public class OrderController {
                     .filter(order -> order.getMember().getId().equals(loginMember.getId()))
                     .toList();
         }
+        // 2. 각 주문에 해당하는 결제 정보(paymentKey) 조회
+        // orderId(String) = payment.merchantUid 기준
+        Map<Long, String> paymentKeyMap = new HashMap<>();
+        for (Order order : orders) {
+            try {
+                Payment payment = paymentService.findByOrderId(String.valueOf(order.getId()));
+                paymentKeyMap.put(order.getId(), payment.getImpUid()); // = paymentKey
+            } catch (Exception e) {
+                log.warn("결제 정보 없음: orderId={}", order.getId());
+            }
+        }
+        // 3. 모델에 데이터 담기
         model.addAttribute("orders", orders);
+        model.addAttribute("paymentKeyMap", paymentKeyMap);
         return "order/orderList";
     }
 
     //주문 취소
     @PostMapping("/orders/{orderId}/cancel")
-    public String cancelOrder(@PathVariable("orderId") Long orderId) {
+    public String cancelOrder(@PathVariable("orderId") Long orderId,
+                              @RequestParam("paymentKey") String paymentKey) {
+
+        log.info("주문 취소 요청 들어옴: orderId={}",orderId);
+
+        try {
+            //1. 주문번호(orderId)를 문자열로 변환해서 결제 정보 조회
+            Payment payment = paymentService.findByPaymentKey(paymentKey);
+            log.info("✅ Payment 조회 성공: paymentKey={}, merchantUid={}", payment.getImpUid(), payment.getMerchantUid());
+
+
+            //2. 토스 결제 취소 api 요청
+            tossPaymentService.cancelPayment(
+                    payment.getImpUid(), //토스의 paymentKey
+                    payment.getAmount(), //결제 금액
+                    "사용자 주문 취소" //취소 사유
+            );
+        }catch (Exception e) {
+            log.error("❌ Payment 조회 실패: orderId={}", orderId);
+            throw e; // 테스트용으로 다시 던져줌
+        }
+
+        //3. 주문 db 상태 업데이트 (CANCEL 처리 및 재고 복원)
         orderService.cancelOrder(orderId);
         return "redirect:/orders";
     }

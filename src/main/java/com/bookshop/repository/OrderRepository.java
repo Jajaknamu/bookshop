@@ -64,41 +64,15 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    /*JPA Criteria - 실무에서 안씀
-
-
-    public List<Order> findAllByCriteria(OrderSearch orderSearch) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Order> cq = cb.createQuery(Order.class);
-        Root<Order> o = cq.from(Order.class);
-        Join<Objects, Objects> m = o.join("member", JoinType.INNER);
-
-        List<Predicate> criteria = new ArrayList<>();
-
-        //주문상태 검색
-        if (orderSearch.getOrderStatus() != null) {
-            Predicate status = cb.equal(o.get("status"), orderSearch.getOrderStatus());
-            criteria.add(status);
-        }
-
-        //회원이름 검색
-        if (orderSearch.getOrderStatus() != null) {
-            Predicate name = cb.like(m.<String>get("name"), "%" + orderSearch.getMemberName() + "%");
-            criteria.add(name);
-        }
-
-        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
-        TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000);
-        return query.getResultList();
-    }
-
-return em.createQuery("select o from  Order o join  o.member m" +
-                        " where o.status = :status " +
-                        " and m.name like :name", Order.class)
-                .setParameter("status", orderSearch.getOrderStatus())
-                .setParameter("name", orderSearch.getMemberName())
-               .setMaxResults(1000) //최대 1000건
+    // Order와 Member를 한번에 join해서 조회
+    public List<Order> findAllWithMember(OrderSearch search) {
+        return em.createQuery(
+                        "select distinct o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.orderItems oi" +
+                                " join fetch oi.item i" +
+                                " left join fetch o.payment p" , Order.class)
                 .getResultList();
     }
-*/
+
 }

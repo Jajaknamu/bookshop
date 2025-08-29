@@ -5,6 +5,10 @@
     <title>내 주문 목록</title>
     <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- [수정] CSRF 토큰을 전역에서 접근 가능하도록 메타에 심어두면 선택적으로 사용 가능 -->
+    <meta name="_csrf_parameter" th:content="${_csrf?.parameterName}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+    <meta name="_csrf" th:content="${_csrf?.token}">
 </head>
 <body>
 <!--상단 네비게이션-->
@@ -56,12 +60,28 @@
                 <td th:text="${item.orderItems[0].item.name}"></td>
                 <td th:text="${item.orderItems[0].orderPrice}"></td>
                 <td th:text="${item.orderItems[0].count}"></td>
+
                 <td th:text="${item.status}"></td>
                 <td th:text="${item.orderDate}"></td>
                 <td>
-                    <a th:if="${item.status.name() == 'ORDER'}" href="#"
-                       th:href="'javascript:cancel('+${item.id}+')'"
-                       class="btn btn-danger">CANCEL</a>
+                    <!-- 결제 정보 자체가 없는 경우 -->
+                    <button th:if="${item.status.name() == 'ORDER' and item.payment == null}"
+                            class="btn btn-secondary" disabled>
+                        결제정보 없음
+                    </button>
+
+                    <!-- 결제 정보가 있고 상태가 취소된 경우 -->
+                    <button th:if="${item.payment != null and item.payment.status == 'canceled'}"
+                            class="btn btn-outline-secondary" disabled>
+                        취소된 결제
+                    </button>
+
+                    <!-- 결제 정보가 있고 상태가 paid인 경우만 취소 가능 -->
+                    <a th:if="${item.status.name() == 'ORDER' and item.payment != null and item.payment.status == 'paid'}"
+                       href="#"
+                       th:attr="onclick=|cancelOrder(${item.id}, '${item.payment.impUid}')|" class="btn btn-danger">
+                        CANCEL
+                    </a>
                 </td>
             </tr>
             </tbody>
@@ -69,14 +89,118 @@
     </div>
     <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
-</body>
+
+<!-- [수정] 전역 CSRF 히든 인풋: fetch body 전송 방식으로 사용할 때 활용 -->
+<input type="hidden" name="_csrf"
+       th:value="${_csrf?.token}"/>
+
+<!-- [수정] 확인(confirm) → fetch POST → 성공 alert → 새로고침 로직 -->
 <script>
-    function cancel(id) {
-        var form = document.createElement("form");
+    /**
+     * 주문 취소 요청 함수
+     * @param {number|string} orderId - 주문 ID
+     * @param {string} paymentKeyOrImpUid - 결제 식별 키 (Toss: paymentKey, PortOne: impUid)
+     *
+     * 동작 순서:
+     * 1) 브라우저 확인창(confirm)으로 사용자 의사 확인
+     * 2) 확인 시, fetch로 서버에 POST 요청 (/orders/{orderId}/cancel)
+     * 3) 서버가 200 OK 응답하면 alert로 "결제가 취소되었습니다." 표시
+     * 4) 페이지 새로고침(상태 반영)
+     *
+     * 주의:
+     * - Spring Security CSRF 사용 시 토큰을 함께 전송해야 함.
+     *   이 코드는 hidden input[name=_csrf] 또는 <meta>의 토큰을 읽어 body/헤더로 전송.
+     * - 서버 컨트롤러가 "redirect:/orders"를 반환하더라도 fetch는 200(또는 3xx)로 응답을 받으므로
+     *   프론트에서 alert 후 location.reload()로 갱신해주면 됨.
+     */
+    async function cancelOrder(orderId, paymentKeyOrImpUid) {
+        // 1) 사용자 확인 창
+        if (!confirm("결제를 취소하시겠습니까?")) {
+            return; // '취소'를 누르면 아무 동작도 하지 않음
+        }
+
+        // 2) CSRF 토큰 준비 (hidden input 우선 → 없으면 meta 태그)
+        const csrfInput = document.querySelector("input[name=_csrf]");
+        const csrfTokenFromInput = csrfInput ? csrfInput.value : null;
+
+        const metaToken = document.querySelector('meta[name="_csrf"]')?.getAttribute("content");
+        const metaHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute("content");
+        const csrfToken = csrfTokenFromInput || metaToken || ""; // 둘 중 하나라도 사용
+
+        try {
+            // 3) 서버에 취소 요청 (x-www-form-urlencoded 방식)
+            const params = new URLSearchParams();
+            // 프로젝트에서 실제로 받는 파라미터명에 맞춰 주세요.
+            // - Toss 결제키 사용 시 서버에서 @RequestParam("paymentKey")로 받는다면 아래 name을 "paymentKey"로
+            // - PortOne impUid 사용 시 "impUid"로
+            params.set("paymentKey", paymentKeyOrImpUid); // [수정] 서버 파라미터명에 맞게 변경 가능
+
+            // CSRF 토큰을 body에 포함(기본) + 필요 시 헤더에도 세팅
+            if (csrfToken) {
+                params.set("_csrf", csrfToken);
+            }
+
+            const headers = {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+            };
+            if (metaHeader && csrfToken && !csrfTokenFromInput) {
+                // 메타 기반 CSRF를 쓰는 설정이라면 헤더에도 넣어줌 (환경에 따라 불필요할 수 있음)
+                headers[metaHeader] = csrfToken;
+            }
+
+            const response = await fetch(`/orders/${orderId}/cancel`, {
+                method: "POST",
+                headers,
+                body: params
+            });
+
+            // 4) 응답 처리
+            if (response.ok) {
+                // 성공: alert 후 새로고침
+                alert("결제가 취소되었습니다.");
+                // 새로고침으로 최신 상태 반영
+                window.location.reload();
+            } else {
+                // 서버에서 4xx/5xx 응답 시
+                let msg = "결제 취소에 실패했습니다.";
+                try {
+                    const text = await response.text();
+                    if (text) msg += `\n\n서버 메시지: ${text}`;
+                } catch (_) {}
+                alert(msg);
+            }
+        } catch (e) {
+            console.error(e);
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+    }
+</script>
+</body>
+<!--<script>
+    function cancel(orderId, paymentKey) {
+        const form = document.createElement("form");
         form.setAttribute("method", "post");
-        form.setAttribute("action", "/orders/" + id + "/cancel");
+        form.setAttribute("action", "/orders/" + orderId + "/cancel");
+
+        // CSRF 토큰이 있다면 추가
+        const csrf = document.querySelector("input[name=_csrf]");
+        if (csrf) {
+            const csrfInput = document.createElement("input");
+            csrfInput.setAttribute("type", "hidden");
+            csrfInput.setAttribute("name", "_csrf");
+            csrfInput.setAttribute("value", csrf.value);
+            form.appendChild(csrfInput);
+        }
+
+        const input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "paymentKey");
+        input.setAttribute("value", paymentKey);
+        form.appendChild(input);
+
         document.body.appendChild(form);
         form.submit();
     }
-</script>
+</script>-->
+
 </html>

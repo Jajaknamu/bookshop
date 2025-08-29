@@ -1,5 +1,6 @@
 package com.bookshop.controller;
 
+import com.bookshop.domain.Order;
 import com.bookshop.domain.Payment;
 import com.bookshop.service.*;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -42,9 +44,9 @@ public class PaymentApiController {
             tossPaymentService.verifyPayment(paymentKey, orderId, amount);
             log.info("✅ Toss 결제 검증 완료");
 
-            // 2. 주문 생성
+            /*// 2. 주문 생성
             Long orderIdResult = orderService.order(memberId, itemId, count);
-            log.info("🛒 주문 생성 완료: orderId={}", orderIdResult);
+            log.info("🛒 주문 생성 완료: orderId={}", orderIdResult);*/
 
             // 3. 결제 내역 저장
             Payment payment = new Payment();
@@ -55,7 +57,10 @@ public class PaymentApiController {
             payment.setMemberId(memberId);
             payment.setItemId(itemId);
             payment.setCount(count);
-            paymentService.savePayment(payment);
+            payment.setPaidAt(LocalDateTime.now());
+
+            Long orderIdResult = orderService.order(memberId, itemId, count, payment);
+            log.info("주문 및 결제 저장 완료: orderId={}",orderIdResult);
 
             // 4. 응답 반환
             return ResponseEntity.ok(Map.of(
@@ -82,5 +87,31 @@ public class PaymentApiController {
                 "status", "FAIL",
                 "reason", params.getOrDefault("message", "결제가 실패했습니다.")
         ));
+    }
+
+    //취소 api
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancelPayment(@RequestParam String paymentKey,
+                                           @RequestParam int amount,
+                                           @RequestParam Long orderId,
+                                           @RequestParam String reason) {
+        try {
+            // 1. Toss 결제 취소
+            tossPaymentService.cancelPayment(paymentKey, amount, reason);
+
+            // 2. 주문 상태 취소
+            orderService.cancelOrder(orderId);
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "CANCELLED",
+                    "message", "결제 및 주문 취소 완료"
+            ));
+        } catch (Exception e) {
+            log.error("❌ 결제 취소 실패", e);
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "FAIL",
+                    "message", e.getMessage()
+            ));
+        }
     }
 }

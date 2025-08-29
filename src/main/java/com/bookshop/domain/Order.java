@@ -35,6 +35,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; //주문상태 ORDER, CANCEL
 
+    // Payment 연관관계 추가
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id") // Order 테이블에 payment_id 외래키 컬럼 생성
+    private Payment payment;
+
+
     //연관관계 (편의)메서드
     public void setMember(Member member) {
         this.member = member;
