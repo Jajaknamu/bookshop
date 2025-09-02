@@ -1,13 +1,20 @@
 # 📚 BookShop - 주문 관리 시스템
-**Java / Spring Boot / Spring Data JPA / REST API 기반 사이드 프로젝트**
+**Java / Spring Boot / Spring Data JPA / REST API 기반 사이드 프로젝트**   
+**➕기능 확장: TossPayments 결제 시스템 추가**
 
 > 📬 이메일: heyfer6867@gmail.com  
 > 💼 포트폴리오: [자세히 보기 (Notion)](https://unique-income-725.notion.site/BookShop-1d2dee6a3251801caf76cca3b5dff517?source=copy_link)
 
 ## 💡 프로젝트 소개
 > `실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발` 강의를 참고하여 만든 프로젝트입니다.  
-> 이 프로젝트는 강의 예제를 기반으로 시작했지만 단순 구현을 넘어 상품-회원-주문 도메인 간 연관관계 설계, API 설계, 트랜잭션 흐름에 대한 이해를 확장하는 데 목적을 두었습니다.
-> 회원가입 및 주문 기능은 Thymeleaf를 통한 서버 렌더링(SSR) 기반이며 관리 기능 및 데이터 조회는 REST API 기반으로 처리됩니다. 추후 프론트-백엔드 완전 분리를 목표로 리팩토링 예정입니다.
+> 이 프로젝트는 강의 예제를 기반으로 시작했지만 단순 구현을 넘어 상품-회원-주문 도메인 간 연관관계 설계, API 설계, 트랜잭션 흐름에 대한 이해를 확장하는 데 목적을 두었습니다.   
+
+> 기존 예제인 Thymeleaf를 통한 서버 렌더링 구현을 넘어 REST API를 적용하여 데이터 조회와 관리 기능을 개선했습니다.   
+> 주문 시스템에서 Toss Payments표준결체창(v2)를 활용하여 실제 토스앱으로 연동해 결제가능 및 취소 로직을 구현했습니다.
+
+
+## 👥 개발 기간
+#### 2025.04.07 ~ 2025.04.27
 
 
 ## ⚙️ 개발 환경 및 기술 스택
@@ -24,15 +31,18 @@
 | **Tools**           | Git, GitHub                                                           |
 | **Testing**         |JUnit                                                                  |
 
-## 👥 개발 인원 및 기간
-#### 개발 기간 - 2025.04.07 ~ 2025.04.27
 
 ## 🧩 핵심 기능
-
 - 회원가입 / 로그인 / 주문 내역 확인
 - 상품 등록, 수정, 삭제 (관리자 전용)
 - 주문 생성 / 취소 + 재고 수량 반영
 - REST API 기반 CRUD 구현
+  
+**➕기능 확장**
+- **결제 요청/승인**: Toss SDK를 통한 결제창 호출 → 서버 API(/api/payments/success)에서 결제 검증 및 주문 생성
+- **주문-결제 연동**: 결제 성공 시 OrderService.order() 호출로 주문 및 결제 내역 DB 저장
+- **결제 검증**: Toss REST API를 통해 결제 금액/상태 검증 후 DB 반영
+- **결제 취소**: 주문 취소 시 Toss 결제 취소 API 연동 → 실제 결제 취소 + DB 상태 업데이트
 
 ## 🧾 API 명세서
 
@@ -56,6 +66,14 @@
 | `PATCH`  | `/api/items/{id}`         | `BookDto`         | `String`                 | 상품 수정       |
 | `DELETE` | `/api/items/{id}`         | 없음                | `String`                 | 상품 삭제       |
 
+### ➕결제API
+| Method | URL                     | 설명                 |
+| ------ | ----------------------- | ------------------ |
+| POST   | `/api/payments/request` | 결제 요청              |
+| POST   | `/api/payments/success` | 결제 성공 후 검증 + 주문 생성 |
+| POST   | `/api/payments/cancel`  | 결제 취소 처리           |
+
+
 ➡️ [📑 API 상세 명세 보기 (Notion)](https://unique-income-725.notion.site/BookShop-API-214dee6a325180abba7bfe1c49af9e8e?source=copy_link)
 
 
@@ -77,8 +95,8 @@
 ## 📌 프로젝트 목표 및 학습 포인트
 - JPA 연관관계 매핑 (단방향/양방향)
 - RESTful URL 설계 및 HTTP 메서드 활용
-- Controller-Service-Repository 계층 분리
 - 요청/응답 DTO 사용 및 API 명세화
+- 결제 시 @RequestParam으로 값 받음 -> 추후 @RequestBody + DTO로 리펙토링
 
 
 ## 📎 기타 참고
@@ -119,20 +137,48 @@
     }
 ```
 
-## ➕프로젝트 확장 기능
-> 기존 주문 시스템에 실제 결제 기능을 확장하여 적용하였습니다.  
-> Toss Payments표준결체창(v2)를 활용하여 실제 토스앱으로 연동해 결제가능 및 취소 로직을 구현했습니다.
+## 📌 일부 코드 예시 -> Toss결제 로직
 
-### 결제 기능(TossPayments연동)
-- 결제 요청/승인: Toss SDK를 통한 결제창 호출 → 서버 API(/api/payments/success)에서 결제 검증 및 주문 생성
-- 주문-결제 연동: 결제 성공 시 OrderService.order() 호출로 주문 및 결제 내역 DB 저장
-- 결제 검증: Toss REST API를 통해 결제 금액/상태 검증 후 DB 반영
-- 결제 취소: 주문 취소 시 Toss 결제 취소 API 연동 → 실제 결제 취소 + DB 상태 업데이트
-  
-### 결제 및 취소 API
-| Method | URL                     | 설명                 |
-| ------ | ----------------------- | ------------------ |
-| POST   | `/api/payments/request` | 결제 요청              |
-| POST   | `/api/payments/success` | 결제 성공 후 검증 + 주문 생성 |
-| POST   | `/api/payments/cancel`  | 결제 취소 처리           |
+```
+//Toss Payments 결제 승인(확인) 요청 메서드.
+public void verifyPayment(String paymentKey, String orderId, int amount) {
+        // 1) Toss 결제 승인(확인) API 엔드포인트
+        String url = "https://api.tosspayments.com/v1/payments/confirm";
+
+        // 2) HTTP 헤더 구성 (Basic 인증 + JSON 컨텐트 타입)
+        HttpHeaders headers = new HttpHeaders();
+        String encodedAuth = Base64.getEncoder().encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
+        headers.set("Authorization", "Basic " + encodedAuth);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 3) 요청 바디(JSON) 생성
+        Map<String, Object> body = new HashMap<>();
+        body.put("paymentKey", paymentKey);
+        body.put("orderId", orderId);
+        body.put("amount", amount);
+
+        // 4) HttpEntity로 헤더와 바디를 묶어 전송 준비
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        try {
+            // 5) Toss 서버에 결제 승인(확인) 요청 전송 (POST)
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+            // 6) 상태 코드가 2xx가 아니면 승인 실패로 간주
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalStateException("Toss 결제 확인 실패 : 응답코드 = " + response.getStatusCode());
+            }
+            // 7) 승인 성공 로그 출력
+            log.info("Toss 결제 검증 성공: {} ", response.getBody());
+        } catch (HttpClientErrorException e) {
+            // 8) Toss가 4xx 에러를 반환한 경우(요청 파라미터 오류, 이미 승인된 결제 등)
+            log.info("Toss 결제 확인 실패 (HTTP 오류): {}", e.getResponseBodyAsString(), e);
+            throw new IllegalStateException("결제 검증 실패: " + e.getResponseBodyAsString(), e);
+        } catch (Exception e) {
+            // 10) 네트워크 문제, 타임아웃, 직렬화 문제 등 그 외 예외 처리
+            log.info("Toss 결제 확인 중 예외 발생", e);
+            throw new RuntimeException("Toss 결제 확인 중 오류: " + e.getMessage(), e);
+        }
+    }
+```
 
