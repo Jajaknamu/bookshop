@@ -69,10 +69,11 @@
 ### ➕결제API
 | Method | URL                     | 설명                 |
 | ------ | ----------------------- | ------------------ |
-| POST   | `/api/payments/request` | 결제 요청              |
-| POST   | `/api/payments/success` | 결제 성공 후 검증 + 주문 생성 |
-| POST   | `/api/payments/cancel`  | 결제 취소 처리           |
-
+| GET   | `/api/payments/success` | 토스 결제 성공 콜백 처리              |
+| POST   | `/api/payments/cancel` | 결제 취소 |
+| GET   | `/api/payments/fail`  | 토스 결제 실패 콜백 저장/응답          |
+| GET   | `/payments/view/success` | 결제 성공 결과 화면 렌더  |
+| GET | `/payments/view/fail`| 결제 실패 시 화면 이동|
 
 ➡️ [📑 API 상세 명세 보기 (Notion)](https://unique-income-725.notion.site/BookShop-API-214dee6a325180abba7bfe1c49af9e8e?source=copy_link)
 
@@ -181,6 +182,7 @@ public void verifyPayment(String paymentKey, String orderId, int amount) {
         }
     }
 ```
+
 
 
 
