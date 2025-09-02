@@ -108,8 +108,14 @@
 
 > **회원가입, 주문 생성/취소, 상품 등록/수정/삭제** 등 자세한 시연 화면은 [노션 포트폴리오](https://www.notion.so/BookShop-1d2dee6a3251801caf76cca3b5dff517?pvs=97#1d7dee6a3251806da53ce7674a512ed7)에 포함되어 있습니다.
 
-> https://github.com/user-attachments/assets/99201ec4-f544-4481-afa2-336c51e437a2
+> https://github.com/user-attachments/assets/99201ec4-f544-4481-afa2-336c51e437a2   
+
+> **결제 및 취소**
+ 
+> https://github.com/user-attachments/assets/b30b009c-691f-4eb0-9d7b-d4e31eb67f2e
 > 
+
+
 ## 📌 일부 코드 예시 -> 주문 생성 로직 
 - 회원, 상품, 배송 정보를 조회하여 하나의 주문 객체로 생성하는 메서드
 ```
@@ -182,6 +188,7 @@ public void verifyPayment(String paymentKey, String orderId, int amount) {
         }
     }
 ```
+
 
 
 
