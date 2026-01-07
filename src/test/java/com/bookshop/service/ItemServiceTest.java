@@ -1,8 +1,9 @@
 package com.bookshop.service;
 
-import com.bookshop.domain.item.Book;
-import com.bookshop.domain.item.Item;
-import com.bookshop.repository.ItemJpaRepository;
+import com.bookshop.order.domain.item.Book;
+import com.bookshop.order.domain.item.Item;
+import com.bookshop.order.service.ItemService;
+import com.bookshop.order.repository.ItemJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
