@@ -7,16 +7,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity // 스프링 시큐리티 활성화
 @Configuration //설정 클래스라고 스프링에 알려주는 어노테이션
 public class SecurityConfig {
 
-    //비밀번호 암호화를 위한 메서드
+    /*//비밀번호 암호화를 위한 메서드
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }*/
+
+    //비밀번호 암호화 안하고 일단 로그인 테스트
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean

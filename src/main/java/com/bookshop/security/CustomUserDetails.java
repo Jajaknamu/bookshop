@@ -1,7 +1,6 @@
 package com.bookshop.security;
 
 import com.bookshop.member.domain.Member;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -10,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @ToString

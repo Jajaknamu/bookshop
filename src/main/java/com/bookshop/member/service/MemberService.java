@@ -27,7 +27,7 @@ public class MemberService {
 
     //중복회원검증 로직
     private void validateDuplicateMember(Member member) {
-        List<Member> findMembers = memberJpaRepository.findByName(member.getName());//같은 이름 있는지 확인, 유니크 제약조건 주는것도 좋은 방법(동시가입 이슈)
+        List<Member> findMembers = memberJpaRepository.findAllByName(member.getName());//같은 이름 있는지 확인, 유니크 제약조건 주는것도 좋은 방법(동시가입 이슈)
         if (!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
@@ -68,7 +68,7 @@ public class MemberService {
 
     //회원 로그인 시 이름 검사
     public Member findByName(String name) {
-        List<Member> members = memberJpaRepository.findByName(name);
+        List<Member> members = memberJpaRepository.findAllByName(name);
         if (members.isEmpty()) {
             return null;
         }
