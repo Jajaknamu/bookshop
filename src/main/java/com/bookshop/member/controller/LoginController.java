@@ -18,7 +18,7 @@ public class LoginController {
     private final MemberService memberService;
 
     //로그인 화면
-    @GetMapping("/login")
+    @GetMapping("/loginPage")
     public String loginForm(Model model) {
         model.addAttribute("loginForm", new LoginForm());
         return "login";

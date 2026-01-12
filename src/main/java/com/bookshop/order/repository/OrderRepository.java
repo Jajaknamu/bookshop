@@ -1,8 +1,8 @@
 package com.bookshop.order.repository;
 
+import com.bookshop.order.domain.Order;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import com.bookshop.domain.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;

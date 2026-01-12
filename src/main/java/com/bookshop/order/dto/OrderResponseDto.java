@@ -1,7 +1,7 @@
 package com.bookshop.order.dto;
 
-import com.bookshop.domain.Order;
-import com.bookshop.domain.OrderStatus;
+import com.bookshop.order.domain.Order;
+import com.bookshop.order.domain.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 

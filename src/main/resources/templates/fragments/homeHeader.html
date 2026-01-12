@@ -11,7 +11,7 @@
             <!-- 오른쪽 로그인 / 사용자 메뉴 -->
             <div th:if="${session.loginMember == null}">
                 <a class="nav-link text-primary" href="/members/new">회원가입</a>
-                <a class="nav-link text-primary" href="/login">로그인</a>
+                <a class="nav-link text-primary" href="/loginPage">로그인</a>
             </div>
 
             <div th:if="${session.loginMember != null}" class="d-flex align-items-center gap-3">

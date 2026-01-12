@@ -1,7 +1,7 @@
 package com.bookshop.member.controller;
 
+import com.bookshop.order.domain.Address;
 import jakarta.validation.Valid;
-import com.bookshop.domain.Address;
 import com.bookshop.member.domain.Member;
 import com.bookshop.member.service.MemberService;
 import lombok.RequiredArgsConstructor;

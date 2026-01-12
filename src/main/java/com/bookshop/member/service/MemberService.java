@@ -1,9 +1,9 @@
 package com.bookshop.member.service;
 
-import com.bookshop.domain.Address;
 import com.bookshop.member.domain.Member;
 import com.bookshop.member.dto.MemberUpdateDto;
 import com.bookshop.member.repository.MemberJpaRepository;
+import com.bookshop.order.domain.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

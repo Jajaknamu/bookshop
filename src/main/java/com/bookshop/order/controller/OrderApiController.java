@@ -1,6 +1,6 @@
 package com.bookshop.order.controller;
 
-import com.bookshop.domain.Order;
+import com.bookshop.order.domain.Order;
 import com.bookshop.order.dto.OrderRequestDto;
 import com.bookshop.order.dto.OrderResponseDto;
 import com.bookshop.order.repository.OrderSearch;

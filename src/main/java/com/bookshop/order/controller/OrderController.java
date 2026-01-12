@@ -1,5 +1,6 @@
 package com.bookshop.order.controller;
 
+import com.bookshop.order.domain.Order;
 import com.bookshop.payment.domain.Payment;
 import com.bookshop.member.service.MemberService;
 import com.bookshop.order.service.ItemService;
@@ -9,7 +10,6 @@ import com.bookshop.payment.service.TossPaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import com.bookshop.member.domain.Member;
-import com.bookshop.domain.Order;
 import com.bookshop.order.domain.item.Item;
 import com.bookshop.order.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;

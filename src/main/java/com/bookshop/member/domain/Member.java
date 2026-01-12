@@ -1,7 +1,7 @@
 package com.bookshop.member.domain;
 
-import com.bookshop.domain.Address;
-import com.bookshop.domain.Order;
+import com.bookshop.order.domain.Address;
+import com.bookshop.order.domain.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

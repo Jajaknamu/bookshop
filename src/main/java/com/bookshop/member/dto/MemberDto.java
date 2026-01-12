@@ -1,7 +1,7 @@
 package com.bookshop.member.dto;
 
-import com.bookshop.domain.Address;
 import com.bookshop.member.domain.Member;
+import com.bookshop.order.domain.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
