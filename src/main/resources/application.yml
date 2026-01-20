@@ -41,7 +41,5 @@ tossPayments:
   clientKey: test_ck_0RnYX2w532o7od6ap7plVNeyqApQ
   secretKey: test_sk_5OWRapdA8dG6N5Qao1wYro1zEqZK
 
-iamport:
-  api:
-    key: "4043884514440450"
-    secret: "ZsWFe4bEBGzQa4oxH09ZS2yPsCMqrvPGmXQrcUkNBCTuA7liSYI5OrdUNX1Sbu9bq8XNHec4El21yRyh"
+jwt:
+  secret: your-secret-key-must-be-at-least-32-characters-long-for-hs256-algorithm
