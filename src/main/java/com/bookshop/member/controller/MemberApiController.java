@@ -30,7 +30,7 @@ public class MemberApiController {
     @PostMapping
     public ResponseEntity<Long> saveMember(@RequestBody MemberDto dto) {
         Member member = dto.toEntity();
-        Long id = memberService.join(member);
+        Long id = memberService.join(dto);
         return ResponseEntity.ok(id);
     }
 
