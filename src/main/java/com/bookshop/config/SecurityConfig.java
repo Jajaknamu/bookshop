@@ -1,19 +1,21 @@
 package com.bookshop.config;
 
-import lombok.AllArgsConstructor;
+import com.bookshop.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity // 스프링 시큐리티 활성화
 @Configuration //설정 클래스라고 스프링에 알려주는 어노테이션
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     //비밀번호 암호화를 위한 메서드
     @Bean
@@ -22,17 +24,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception{
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/members/new", "/api/items").permitAll()
+                        .requestMatchers("/", "/members/new", "/api/items", "/api/login").permitAll()
                         .anyRequest().authenticated()
                 );
         //csrf는 항상 켜두어야함. 공부적 허용으로 꺼두기
         http
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers("/member/new")
+                        .ignoringRequestMatchers("/member/new", "/api/login")
                 );
         //커스텀 로그인 설정
         http
@@ -49,6 +51,10 @@ public class SecurityConfig {
                 .sessionManagement((auth) -> auth
                         .sessionFixation().changeSessionId()
                 );
+
+        //jwt 필터 추가 -> UsernamePasswordAuthenticationFilter 앞에 실행됨
+        http
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
