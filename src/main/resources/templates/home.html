@@ -7,7 +7,7 @@
 <body>
 <div class="container">
 
-    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div th:replace="~{fragments/bodyHeader :: bodyHeader}">
 
         <div class="jumbotron">
             <h1>HELLO SHOP</h1>
@@ -27,8 +27,8 @@
                 <a class="btn btn-lg btn-info" href="/orders">주문 내역</a>
             </p>
         </div>
-
-    <div th:replace="fragments/footer :: footer" />
+    </div>
+    <div th:replace="fragments/footer :: footer"> </div>
 
 </div>
 </body>
