@@ -23,14 +23,18 @@ public class MemberService {
     /*회원가입*/
     @Transactional
     public Long join(MemberDto memberDto){
+
         validateDuplicateMember(memberDto);//중복회원 검증
 
-        //회원객체 생성
-        Member memberEntity = new Member();
-        memberEntity.setName(memberDto.getName());
+        //dto -> entity 변환 해줌
+        Member memberEntity = memberDto.toEntity();
+
+        //비번은 꼭 service에서 암호화 따로 해주기
         memberEntity.setPassword(bCryptPasswordEncoder.encode(memberDto.getPassword()));
-        memberEntity.setAddress(new Address(memberDto.getCity(), memberDto.getStreet(), memberDto.getZipcode()));
+
+        //그럼 이제 저장ㄱㄱ
         memberJpaRepository.save(memberEntity);
+
         return memberEntity.getId();
     }
 

@@ -13,14 +13,14 @@
 </head>
 <body>
 <!--상단 네비게이션-->
-<div th:replace="fragments/homeHeader :: homeHeader"></div>
+<div th:replace="~{fragments/homeHeader :: homeHeader}"></div>
 
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
   <!-- 로그인 폼 카드 -->
   <div class="login-form-container w-100 p-4 shadow rounded bg-white">
     <h2 class="mb-4 text-center">로그인</h2>
 
-    <form th:action="@{/login}" method="post">
+    <form id="loginForm">
       <div class="mb-3">
         <label class="form-label">이름</label>
         <input type="text" name="name" class="form-control" required>
@@ -30,13 +30,51 @@
         <input type="password" name="password" class="form-control" required>
       </div>
 
-      <!--&lt;!&ndash; 로그인 실패 시 에러 메시지 표시 &ndash;&gt;
-      <div th:if="${loginError}" class="alert alert-danger" th:text="${loginError}"></div>-->
+      <!--에러 메시지 영역-->
+      <div id="loginError" class="alert alert-danger d-none"></div>
 
       <button type="submit" class="btn btn-primary w-100">로그인</button>
     </form>
   </div>
 </div>
+
+<script>
+  /*로그인 API 호출(jwt쿠키는 서버가 Set-Cookie로 내려주게 할 예정)*/
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.querySelector("input[name='name']").value;
+    const password = document.querySelector("input[name='password']").value;
+
+    const errorBox = document.getElementById("loginError");
+    errorBox.classList.add("d-none");
+    errorBox.textContent = "";
+
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // ✅ [중요] 쿠키 주고받기 허용 (같은 도메인이어도 붙여두면 안전)
+        credentials: "same-origin",
+        body: JSON.stringify({ name, password })
+      });
+
+      if (!res.ok) {
+        // 서버가 401을 주면 여기로 옴
+        const msg = await res.text();
+        errorBox.textContent = msg || "로그인 실패";
+        errorBox.classList.remove("d-none");
+        return;
+      }
+
+      // 성공이면 홈으로 이동
+      window.location.href = "/";
+    } catch (err) {
+      errorBox.textContent = "네트워크 오류로 로그인에 실패했습니다.";
+      errorBox.classList.remove("d-none");
+    }
+  });
+</script>
 
 </body>
 </html>

@@ -4,6 +4,7 @@ import com.bookshop.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,18 +31,20 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/members/new", "/api/items", "/api/login").permitAll()
+                        //정적 리소스 허용
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        // 화면 접근 허용
+                        .requestMatchers(HttpMethod.GET, "/", "/members/new", "/loginPage").permitAll()
+                        //회원가입/로그인 api 허용
+                        .requestMatchers(HttpMethod.POST, "/api/members","/login").permitAll()
+                        //상품 조회 허용(메인페이지용)
+                        .requestMatchers(HttpMethod.GET, "/api/items").permitAll()
                         .anyRequest().authenticated() //나머지는 인증 필요
                 );
         //csrf는 항상 켜두어야함. 공부적 허용으로 꺼두기. JWT는 Stateless라 CSRF 비활성화
         http
-                .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers("/member/new", "/api/login")
-                );
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //세션 저장 안함
-                );
+                .csrf(csrf -> csrf.disable())
+                        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //커스텀 로그인 설정
         http
                 .formLogin((auth) -> auth

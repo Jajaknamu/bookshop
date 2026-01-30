@@ -40,7 +40,7 @@ public class MemberDto {
     public Member toEntity() {
         Member member = new Member();
         member.setName(this.name);
-        member.setPassword(this.password);
+//        member.setPassword(this.password); 서비스에서 암호화해서 넣어줄거라 제거
         member.setAddress(new Address(this.city, this.street, this.zipcode));
         return member;
     }

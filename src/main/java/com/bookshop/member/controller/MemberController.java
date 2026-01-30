@@ -1,9 +1,7 @@
 package com.bookshop.member.controller;
 
 import com.bookshop.member.dto.MemberDto;
-import com.bookshop.order.domain.Address;
 import jakarta.validation.Valid;
-import com.bookshop.member.domain.Member;
 import com.bookshop.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
@@ -31,7 +28,7 @@ public class MemberController {
     }
 
     //회원 가입 정보 폼으로 받아서 넘어온거 저장
-    @PostMapping("/members/new")
+    @PostMapping("/members/save")
     public String create(@Valid MemberForm form, BindingResult result) {
         log.info("회원가입 요청");
         log.info("회원가입한 name: " + form.getName());
