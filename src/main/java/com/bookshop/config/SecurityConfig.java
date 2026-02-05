@@ -36,7 +36,7 @@ public class SecurityConfig {
                         // 화면 접근 허용
                         .requestMatchers(HttpMethod.GET, "/", "/members/new", "/loginPage").permitAll()
                         //회원가입/로그인 api 허용
-                        .requestMatchers(HttpMethod.POST, "/api/members","/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/members","/api/login").permitAll()
                         //상품 조회 허용(메인페이지용)
                         .requestMatchers(HttpMethod.GET, "/api/items").permitAll()
                         .anyRequest().authenticated() //나머지는 인증 필요
@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //커스텀 로그인 설정
         http
-                .formLogin((auth) -> auth
+                /*.formLogin((auth) -> auth
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
@@ -55,7 +55,10 @@ public class SecurityConfig {
                         .usernameParameter("name")
                         .passwordParameter("password")
                         .permitAll()
-                );
+                );*/
+                        .formLogin(form -> form.disable())
+                                .httpBasic(basic -> basic.disable()
+                                );
         http
                 .sessionManagement((auth) -> auth
                         .sessionFixation().changeSessionId()
