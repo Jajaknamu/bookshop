@@ -35,8 +35,9 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         // 화면 접근 허용
                         .requestMatchers(HttpMethod.GET, "/", "/members/new", "/loginPage").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/orders").hasAuthority("ROLE_USER")
                         //회원가입/로그인 api 허용
-                        .requestMatchers(HttpMethod.POST, "/api/members","/api/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/members","/api/login", "/logout").permitAll()
                         //상품 조회 허용(메인페이지용)
                         .requestMatchers(HttpMethod.GET, "/api/items").permitAll()
                         .anyRequest().authenticated() //나머지는 인증 필요

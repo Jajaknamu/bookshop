@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,9 @@ public class LoginController {
     private final JwtTokenProvider jwtTokenProvider; //JWT 발급 도구
     private final BCryptPasswordEncoder bCryptPasswordEncoder; //비밀번호 검증 도구
 
+    // 쿠키 이름을 상수로 빼서 발급/삭제가 100퍼 동일하게 맞도록 함(실수 방지용)
+    private static final String ACCESS_TOKEN_COOKIE = "accessToken";
+
 
     //로그인 화면
     @GetMapping("/loginPage")
@@ -36,7 +40,10 @@ public class LoginController {
     @PostMapping("/api/login")
     @ResponseBody
     public ResponseEntity<?> apiLogin(@RequestBody LoginForm loginForm) {
-        Member loginMember = memberService.findByName(loginForm.getName()); //이름으로 회원 찾기
+
+        //이름으로 회원 찾기
+        Member loginMember = memberService.findByName(loginForm.getName());
+
         if (loginMember == null) { //회원 없으면
             return ResponseEntity.status(401).body(new LoginResponse("회원없음! 실패")); //401 반환
         }
@@ -48,7 +55,7 @@ public class LoginController {
         String token = jwtTokenProvider.generateToken(loginMember); //JWT 생성
 
         //HttpOnly 쿠키로 토큰 내려주기
-        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
+        ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE, token)
                 .httpOnly(true) //js접근 차단
                 .secure(false) //https면 true 권장(로컬 개발이라 false)
                 .path("/") //전체경로
@@ -62,19 +69,28 @@ public class LoginController {
     }
 
     /**
-     * ✅ [수정] 로그아웃: 세션 invalidate가 아니라 쿠키 삭제
+     * 로그아웃: 세션 invalidate가 아니라 쿠키 삭제
+     * 발급할때의 옵션을 최대한 동일하게 맞춰야 브라우저가 확실히 삭제함
      */
     @PostMapping("/logout")
-    public String logout(HttpServletResponse response) {
+    public String logout(@CookieValue(name = ACCESS_TOKEN_COOKIE,required = false) String token,//<- 이거 없어도 되긴하는데 그냥 검증용,쿠키 잘 있나.
+                         SecurityContextHolder ignored,
+                         HttpServletResponse response) {
 
-        ResponseCookie deleteCookie = ResponseCookie.from("accessToken", "")
+        //삭제 쿠키에도 sameSite/secure/path 등을 발급과 맞춰줌
+        ResponseCookie deleteCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE, "")
                 .httpOnly(true)
                 .secure(false)   // HTTPS면 true
                 .path("/")
+                .sameSite("Lax")
                 .maxAge(0)       // ✅ 즉시 만료(삭제)
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
+        //[참고] JWT는 Stateless라 서버에 남는 인증 상태는 없지만,
+        //혹시라도 같은 요청 흐름에서 SecurityContext가 남아있는 것처럼 보이는 걸 방지하려고 비워줌(안전장치)
+        SecurityContextHolder.clearContext();
         return "redirect:/";
     }
 

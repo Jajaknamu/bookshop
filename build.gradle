@@ -22,6 +22,10 @@ repositories {
 }
 
 dependencies {
+	// 타임리프에서 Spring Security 인증 상태를 사용할 수 있게 해줌
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+
 	// api 문서 자동화
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 

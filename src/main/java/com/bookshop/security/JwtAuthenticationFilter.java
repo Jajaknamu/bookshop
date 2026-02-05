@@ -7,7 +7,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -46,8 +49,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         List.of(new SimpleGrantedAuthority("ROLE_" + member.getRole())); // 권한 리스트 생성
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(member.getName(), null, authorities); // 인증 객체 생성
+
+                // ✅ [추가] SecurityContext에 넣기 전: 권한 확인 로그
+                log.info("[JWT] before setAuth - uri={}, authName={}, authorities={}",
+                        request.getRequestURI(),
+                        authentication.getName(),
+                        authentication.getAuthorities()); // ✅ 여기서 ROLE_USER 같은 게 보여야 함
                 SecurityContextHolder.getContext().setAuthentication(authentication); // SecurityContext에 저장
             }
+
+            // ✅ [추가] 넣은 뒤에도 확인 가능
+            Authentication after = SecurityContextHolder.getContext().getAuthentication();
+            log.info("[JWT] after setAuth - uri={}, authName={}, authorities={}",
+                    request.getRequestURI(),
+                    after.getName(),
+                    after.getAuthorities());
         }
         filterChain.doFilter(request, response); //다음 필터로 이동
 
@@ -55,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Authorization 헤더에서 Bearer 토큰 추출
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization"); //헤더 읽이
+        String bearerToken = request.getHeader("Authorization"); //헤더 읽기
 
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) { //Bearer형식 확인
             return bearerToken.substring(7); // "Bearer " 이후 문자열 반환
