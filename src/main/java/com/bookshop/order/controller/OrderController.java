@@ -14,6 +14,7 @@ import com.bookshop.order.domain.item.Item;
 import com.bookshop.order.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -58,15 +59,32 @@ public class OrderController {
     //주문 내역 페이지 호출 -> 주문 내역 리스트 보임
     @GetMapping("/orders")
     public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model,
-                            HttpServletRequest request) {
+                            HttpServletRequest request, Authentication authentication) {
 
-        HttpSession session = request.getSession(false);
+        //디버깅 용
+        log.info("🔍 authentication: {}", authentication);
+        log.info("🔍 isAuthenticated: {}", authentication != null && authentication.isAuthenticated());
+        log.info("🔍 principal: {}", authentication != null ? authentication.getPrincipal() : "null");
+        log.info("🔍 authorities: {}", authentication != null ? authentication.getAuthorities() : "null");
 
-        if (session == null || session.getAttribute("loginMember") == null) {
-            return "redirect:/login";
+
+        //인증이 없거나 익명이라면 로그인 페이지로
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return "redirect:/loginPage";
         }
+        //인증된 사용자 식별값 꺼내기
+        String loginName = authentication.getName();
+        log.info("🔍 loginName: {}", loginName);
 
-        Member loginMember = (Member) session.getAttribute("loginMember");
+        //db에서 로그인 사용자 조회(세션 대신)
+        Member loginMember = memberService.findByName(loginName);
+        log.info("🔍 loginMember: {}", loginMember);  // ← 이거 추가!
+
+
+        if (loginMember == null) {
+            //토큰은 있는데 db에 사용자가 없으면 비정상 케이스 -> 로그인 풀기 유도
+            return "redirect:/loginPage";
+        }
 
         List<Order> orders;
 

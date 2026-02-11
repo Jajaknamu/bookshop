@@ -28,7 +28,7 @@
                 <div class="col-md-3">
                     <select th:field="*{orderStatus}" class="form-select">
                         <option value="">전체 상태</option>
-                        <option th:each="status : ${T(com.bookshop.domain.OrderStatus).values()}"
+                        <option th:each="status : ${T(com.bookshop.order.domain.OrderStatus).values()}"
                                 th:value="${status}"
                                 th:text="${status}">주문 상태</option>
                     </select>

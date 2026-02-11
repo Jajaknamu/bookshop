@@ -35,7 +35,8 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         // 화면 접근 허용
                         .requestMatchers(HttpMethod.GET, "/", "/members/new", "/loginPage").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/orders").hasAuthority("ROLE_USER")
+                        // [수정] hasAuthority("ROLE_USER") → hasAnyAuthority : ADMIN도 주문 목록 접근 허용
+                        .requestMatchers(HttpMethod.GET,"/orders").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         //회원가입/로그인 api 허용
                         .requestMatchers(HttpMethod.POST, "/api/members","/api/login", "/logout").permitAll()
                         //상품 조회 허용(메인페이지용)
@@ -48,22 +49,23 @@ public class SecurityConfig {
                         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //커스텀 로그인 설정
         http
-                /*.formLogin((auth) -> auth
-                        .loginPage("/loginPage")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true")
-                        .usernameParameter("name")
-                        .passwordParameter("password")
-                        .permitAll()
-                );*/
-                        .formLogin(form -> form.disable())
-                                .httpBasic(basic -> basic.disable()
-                                );
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
+
+        // [수정] 인증 실패 시(미로그인) /loginPage로 리다이렉트하도록 EntryPoint 설정
+        http
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendRedirect("/loginPage");
+                        })
+                );
+
+        /* [수정] 삭제됨 - STATELESS와 충돌하는 sessionFixation 설정 제거
         http
                 .sessionManagement((auth) -> auth
                         .sessionFixation().changeSessionId()
                 );
+        */
 
         //jwt 필터 추가 -> UsernamePasswordAuthenticationFilter 앞에 실행됨
         http
