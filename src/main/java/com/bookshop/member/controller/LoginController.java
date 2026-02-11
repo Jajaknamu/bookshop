@@ -67,11 +67,11 @@ public class LoginController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body("Ok");//토큰 반환
     }
-
-    /**
+/*
+    *//**
      * 로그아웃: 세션 invalidate가 아니라 쿠키 삭제
      * 발급할때의 옵션을 최대한 동일하게 맞춰야 브라우저가 확실히 삭제함
-     */
+     *//*
     @PostMapping("/logout")
     public String logout(@CookieValue(name = ACCESS_TOKEN_COOKIE,required = false) String token,//<- 이거 없어도 되긴하는데 그냥 검증용,쿠키 잘 있나.
                          SecurityContextHolder ignored,
@@ -83,7 +83,7 @@ public class LoginController {
                 .secure(false)   // HTTPS면 true
                 .path("/")
                 .sameSite("Lax")
-                .maxAge(0)       // ✅ 즉시 만료(삭제)
+                .maxAge(0)       // 즉시 만료(삭제)
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
@@ -92,7 +92,7 @@ public class LoginController {
         //혹시라도 같은 요청 흐름에서 SecurityContext가 남아있는 것처럼 보이는 걸 방지하려고 비워줌(안전장치)
         SecurityContextHolder.clearContext();
         return "redirect:/";
-    }
+    }*/
 
     /*//로그인 처리
     @PostMapping("/login")

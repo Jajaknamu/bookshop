@@ -4,10 +4,13 @@ import com.bookshop.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -16,6 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration //설정 클래스라고 스프링에 알려주는 어노테이션
 @RequiredArgsConstructor //final 필드로 생성자 자동 생성
 public class SecurityConfig {
+
+    private static final String ACCESS_TOKEN_COOKIE = "accessToken";
+
 
     //비밀번호 암호화를 위한 메서드
     @Bean
@@ -50,6 +56,27 @@ public class SecurityConfig {
         http
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
+
+        // 로그아웃 jwt 쿠키 삭제하도록 설정
+        http
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                        .deleteCookies(ACCESS_TOKEN_COOKIE)
+                        .addLogoutHandler((request, response, authentication) -> {
+                            ResponseCookie deleteCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE, "")
+                                    .httpOnly(true)
+                                    .secure(false)   // HTTPS면 true
+                                    .path("/")
+                                    .sameSite("Lax")
+                                    .maxAge(0)       // ✅ 즉시 만료(삭제)
+                                    .build();
+                            response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
+                            SecurityContextHolder.clearContext();
+                        })
+                );
 
         // [수정] 인증 실패 시(미로그인) /loginPage로 리다이렉트하도록 EntryPoint 설정
         http
