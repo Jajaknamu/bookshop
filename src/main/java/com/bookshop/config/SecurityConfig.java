@@ -17,9 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor //final 필드로 생성자 자동 생성
 public class SecurityConfig {
 
-    //JWT 검증 필터 주입
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     //비밀번호 암호화를 위한 메서드
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -37,6 +34,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/", "/members/new", "/loginPage").permitAll()
                         // [수정] hasAuthority("ROLE_USER") → hasAnyAuthority : ADMIN도 주문 목록 접근 허용
                         .requestMatchers(HttpMethod.GET,"/orders").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        //item 디테일 보기
+                        .requestMatchers(HttpMethod.GET,"/items/*").hasAuthority("ROLE_USER")
                         //회원가입/로그인 api 허용
                         .requestMatchers(HttpMethod.POST, "/api/members","/api/login", "/logout").permitAll()
                         //상품 조회 허용(메인페이지용)
@@ -59,13 +58,6 @@ public class SecurityConfig {
                             response.sendRedirect("/loginPage");
                         })
                 );
-
-        /* [수정] 삭제됨 - STATELESS와 충돌하는 sessionFixation 설정 제거
-        http
-                .sessionManagement((auth) -> auth
-                        .sessionFixation().changeSessionId()
-                );
-        */
 
         //jwt 필터 추가 -> UsernamePasswordAuthenticationFilter 앞에 실행됨
         http

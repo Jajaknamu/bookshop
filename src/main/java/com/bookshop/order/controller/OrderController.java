@@ -61,25 +61,15 @@ public class OrderController {
     public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model,
                             HttpServletRequest request, Authentication authentication) {
 
-        //디버깅 용
-        log.info("🔍 authentication: {}", authentication);
-        log.info("🔍 isAuthenticated: {}", authentication != null && authentication.isAuthenticated());
-        log.info("🔍 principal: {}", authentication != null ? authentication.getPrincipal() : "null");
-        log.info("🔍 authorities: {}", authentication != null ? authentication.getAuthorities() : "null");
-
-
         //인증이 없거나 익명이라면 로그인 페이지로
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return "redirect:/loginPage";
         }
         //인증된 사용자 식별값 꺼내기
         String loginName = authentication.getName();
-        log.info("🔍 loginName: {}", loginName);
 
         //db에서 로그인 사용자 조회(세션 대신)
         Member loginMember = memberService.findByName(loginName);
-        log.info("🔍 loginMember: {}", loginMember);  // ← 이거 추가!
-
 
         if (loginMember == null) {
             //토큰은 있는데 db에 사용자가 없으면 비정상 케이스 -> 로그인 풀기 유도
