@@ -40,6 +40,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/", "/members/new", "/loginPage").permitAll()
                         // [수정] hasAuthority("ROLE_USER") → hasAnyAuthority : ADMIN도 주문 목록 접근 허용
                         .requestMatchers(HttpMethod.GET,"/orders").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        //관리자 페이지
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         //item 디테일 보기
                         .requestMatchers(HttpMethod.GET,"/items/*").hasAuthority("ROLE_USER")
                         //회원가입/로그인 api 허용
