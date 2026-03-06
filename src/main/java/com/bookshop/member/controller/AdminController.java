@@ -1,7 +1,5 @@
 package com.bookshop.member.controller;
 
-import com.bookshop.member.domain.Member;
-import com.bookshop.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -12,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
-
-    private final MemberService memberService;
 
     @GetMapping
     public String adminDashboard(Authentication authentication) {

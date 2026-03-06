@@ -43,8 +43,10 @@ public class SecurityConfig {
                         //관리자 페이지
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                        //item 디테일 보기
-                        .requestMatchers(HttpMethod.GET,"/items/*").hasAuthority("ROLE_USER")
+                        // [수정] /items/new(책 등록)는 ADMIN 전용 → 구체적 경로가 위에 와야 우선 매칭됨
+                        .requestMatchers(HttpMethod.GET, "/items/new").hasAuthority("ROLE_ADMIN")
+                        // [수정] /items/{id}(상품 상세)는 USER + ADMIN 모두 허용
+                        .requestMatchers(HttpMethod.GET, "/items/*").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         //회원가입/로그인 api 허용
                         .requestMatchers(HttpMethod.POST, "/api/members","/api/login", "/logout").permitAll()
                         //상품 조회 허용(메인페이지용)

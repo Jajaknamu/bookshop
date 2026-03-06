@@ -1,6 +1,8 @@
 package com.bookshop.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -12,5 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
         // /images/** 경로로 들어오는 요청을 → C:/upload/ 폴더에서 찾도록 설정
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:///C:/upload/");
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

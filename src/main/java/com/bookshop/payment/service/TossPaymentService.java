@@ -23,8 +23,7 @@ import java.util.Map;
 public class TossPaymentService {
 
     private final PaymentService paymentService;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     @Value("${tossPayments.secretKey}")
     private String secretKey;

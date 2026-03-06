@@ -62,7 +62,7 @@ public class MemberService {
     public void updateMember(Long id, MemberUpdateDto dto) {
         Member member = findOne(id);
         if (dto.getName() != null) member.setName(dto.getName());
-        if (dto.getPassword() != null) member.setPassword(dto.getPassword());
+        if (dto.getPassword() != null) member.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         if (dto.getCity() != null || dto.getStreet() != null || dto.getZipcode() != null) {
             member.setAddress(new Address(
                     dto.getCity() != null ? dto.getCity() : member.getAddress().getCity(),
