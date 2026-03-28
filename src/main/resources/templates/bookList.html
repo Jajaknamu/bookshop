@@ -28,10 +28,10 @@
 </head>
 <body>
 
-<script th:inline="javascript">
+<!--<script th:inline="javascript">
     // 로그인 여부를 Thymeleaf에서 JS로 전달
     const isLoggedIn = [[${session.loginMember != null}]];
-</script>
+</script>-->
 
 <!-- 상단 네비게이션 분리된 fragment 사용 -->
 <div th:replace="fragments/homeHeader :: homeHeader"></div>
@@ -63,17 +63,16 @@
                     const imagePath = book.imageName ? `/images/${book.imageName}` : `/images/default-book.jpg`;
                     // 한 권의 책을 나타내는 카드 HTML 생성
                     const card = `
-            <div class="col-md-3 mb-4">
-                <a href="/items/${book.id}" class="text-decoration-none text-dark">
-                    <div class="card book-card h-100" data-id="${book.id}">
-                        <img src="${imagePath}" class="card-img-top" alt="book image">
-                        <div class="card-body p-2">
-                            <p class="book-title">${book.name}</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        `;
+                      <div class="col-md-3 mb-4">
+                          <div class="card book-card h-100" data-id="${book.id}">
+                              <img src="${imagePath}" class="card-img-top" alt="book image">
+                              <div class="card-body p-2">
+                                  <p class="book-title">${book.name}</p>
+                              </div>
+                          </div>
+                      </div>
+                    `;
+
                     // 생성된 HTML을 #book-list 요소에 추가
                     bookList.append(card);
                 });
@@ -83,20 +82,13 @@
             }
         });
         // 클릭 이벤트 핸들링 - 로그인 여부에 따라 분기
-        $(document).on("click", ".book-card", function (event) {
-            event.preventDefault(); //브라우저의 기본 클릭 동작 막기
-            event.stopPropagation(); // 상위 요소로의 이벤트 전파 차단
+        $(document).on("click", ".book-card", function () {
+            /*event.preventDefault(); //브라우저의 기본 클릭 동작 막기
+            event.stopPropagation(); // 상위 요소로의 이벤트 전파 차단*/
 
             const bookId = $(this).data("id");
+            window.location.href = `/items/${bookId}`;
 
-            if (isLoggedIn) {
-                // 로그인 되어 있으면 상세 페이지 이동
-                window.location.href = `/items/${bookId}`;
-            } else {
-                // 로그인 안 되어 있으면 알림창만
-                alert("로그인 해주세요.");
-                window.location.href = ``;
-            }
         });
     });
 </script>

@@ -1,0 +1,28 @@
+1772600100105|4|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists category cascade |drop table if exists category cascade 
+1772600100121|7|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists category_item cascade |drop table if exists category_item cascade 
+1772600100126|4|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists delivery cascade |drop table if exists delivery cascade 
+1772600100133|6|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists item cascade |drop table if exists item cascade 
+1772600100153|3|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists member cascade |drop table if exists member cascade 
+1772600100164|9|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists order_item cascade |drop table if exists order_item cascade 
+1772600100170|5|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists orders cascade |drop table if exists orders cascade 
+1772600100172|2|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop table if exists payment cascade |drop table if exists payment cascade 
+1772600100174|1|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop sequence if exists category_seq|drop sequence if exists category_seq
+1772600100176|1|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop sequence if exists delivery_seq|drop sequence if exists delivery_seq
+1772600100177|0|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop sequence if exists item_seq|drop sequence if exists item_seq
+1772600100178|0|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop sequence if exists member_seq|drop sequence if exists member_seq
+1772600100180|0|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop sequence if exists order_item_seq|drop sequence if exists order_item_seq
+1772600100181|0|statement|connection 14|url jdbc:h2:mem:65642d1b-6197-431d-8622-51f9aa0b1957|drop sequence if exists orders_seq|drop sequence if exists orders_seq
+1772781565682|1|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists category cascade |drop table if exists category cascade 
+1772781565684|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists category_item cascade |drop table if exists category_item cascade 
+1772781565685|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists delivery cascade |drop table if exists delivery cascade 
+1772781565686|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists item cascade |drop table if exists item cascade 
+1772781565687|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists member cascade |drop table if exists member cascade 
+1772781565688|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists order_item cascade |drop table if exists order_item cascade 
+1772781565690|1|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists orders cascade |drop table if exists orders cascade 
+1772781565692|1|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop table if exists payment cascade |drop table if exists payment cascade 
+1772781565693|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop sequence if exists category_seq|drop sequence if exists category_seq
+1772781565693|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop sequence if exists delivery_seq|drop sequence if exists delivery_seq
+1772781565694|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop sequence if exists item_seq|drop sequence if exists item_seq
+1772781565694|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop sequence if exists member_seq|drop sequence if exists member_seq
+1772781565695|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop sequence if exists order_item_seq|drop sequence if exists order_item_seq
+1772781565696|0|statement|connection 14|url jdbc:h2:mem:89c7b7b1-dbed-473b-80a5-1bfe9827d68e|drop sequence if exists orders_seq|drop sequence if exists orders_seq

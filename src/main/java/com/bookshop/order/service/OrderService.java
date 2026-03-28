@@ -1,5 +1,8 @@
 package com.bookshop.order.service;
 
+import com.bookshop.order.domain.Delivery;
+import com.bookshop.order.domain.Order;
+import com.bookshop.order.domain.OrderItem;
 import com.bookshop.order.domain.item.Item;
 import com.bookshop.member.domain.Member;
 import com.bookshop.payment.domain.Payment;

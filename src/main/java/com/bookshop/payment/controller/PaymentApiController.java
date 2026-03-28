@@ -1,6 +1,5 @@
 package com.bookshop.payment.controller;
 
-import com.bookshop.domain.Order;
 import com.bookshop.payment.domain.Payment;
 import com.bookshop.order.service.ItemService;
 import com.bookshop.order.service.OrderService;

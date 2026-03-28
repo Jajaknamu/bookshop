@@ -1,5 +1,6 @@
 package com.bookshop.payment.domain;
 
+import com.bookshop.order.domain.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

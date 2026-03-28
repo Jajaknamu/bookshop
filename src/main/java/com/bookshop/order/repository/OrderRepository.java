@@ -1,8 +1,8 @@
 package com.bookshop.order.repository;
 
+import com.bookshop.order.domain.Order;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import com.bookshop.domain.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -64,15 +64,43 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    // Order와 Member를 한번에 join해서 조회
+    // Order와 Member를 한번에 join해서 조회 + 검색 조건 적용
     public List<Order> findAllWithMember(OrderSearch search) {
-        return em.createQuery(
-                        "select distinct o from Order o" +
-                                " join fetch o.member m" +
-                                " join fetch o.orderItems oi" +
-                                " join fetch oi.item i" +
-                                " left join fetch o.payment p" , Order.class)
-                .getResultList();
+        String jpql = "select distinct o from Order o" +
+                " join fetch o.member m" +
+                " join fetch o.orderItems oi" +
+                " join fetch oi.item i" +
+                " left join fetch o.payment p";
+
+        boolean isFirstCondition = true;
+
+        // 주문상태 검색 조건
+        if (search.getOrderStatus() != null) {
+            jpql += " where o.status = :status";
+            isFirstCondition = false;
+        }
+
+        // 회원이름 검색 조건
+        if (StringUtils.hasText(search.getMemberName())) {
+            if (isFirstCondition) {
+                jpql += " where";
+            } else {
+                jpql += " and";
+            }
+            jpql += " m.name like :name";
+        }
+
+        TypedQuery<Order> query = em.createQuery(jpql, Order.class)
+                .setMaxResults(1000);
+
+        if (search.getOrderStatus() != null) {
+            query.setParameter("status", search.getOrderStatus());
+        }
+        if (StringUtils.hasText(search.getMemberName())) {
+            query.setParameter("name", "%" + search.getMemberName() + "%");
+        }
+
+        return query.getResultList();
     }
 
 }

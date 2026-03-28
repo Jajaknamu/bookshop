@@ -1,7 +1,7 @@
 package com.bookshop.member.dto;
 
-import com.bookshop.domain.Address;
 import com.bookshop.member.domain.Member;
+import com.bookshop.order.domain.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +40,7 @@ public class MemberDto {
     public Member toEntity() {
         Member member = new Member();
         member.setName(this.name);
-        member.setPassword(this.password);
+//        member.setPassword(this.password); 서비스에서 암호화해서 넣어줄거라 제거
         member.setAddress(new Address(this.city, this.street, this.zipcode));
         return member;
     }

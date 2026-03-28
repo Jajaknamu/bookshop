@@ -1,11 +1,13 @@
 package com.bookshop.order.controller;
 
+import com.bookshop.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import com.bookshop.member.domain.Member;
 import com.bookshop.order.domain.item.Book;
 import com.bookshop.order.domain.item.Item;
 import com.bookshop.order.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private final MemberService memberService;
 
     //상품 등록 페이지 호출
     @GetMapping("/items/new")
@@ -138,12 +141,21 @@ public class ItemController {
 
     //책 상세 페이지
     @GetMapping("/items/{itemId}")
-    public String itemDetails(@PathVariable Long itemId, Model model, HttpSession session) {
+    public String itemDetails(@PathVariable Long itemId, Model model, Authentication authentication) {
+
+        //인증이 없거나 익명이라면 로그인 페이지로
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return "redirect:/loginPage";
+        }
+        //인증된 사용자 식별값 꺼내기
+        String loginName = authentication.getName();
+
+        //db에서 로그인 사용자 조회
+        Member loginMember = memberService.findByName(loginName);
+
         Book book =(Book) itemService.findOne(itemId); //Book으로 다운캐스팅
 
         model.addAttribute("book", book);
-
-        Member loginMember = (Member) session.getAttribute("loginMember");
         model.addAttribute("loginMember", loginMember);
         return "itemDetail";
     }

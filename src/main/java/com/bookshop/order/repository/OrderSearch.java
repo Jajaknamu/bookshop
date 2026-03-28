@@ -1,6 +1,6 @@
 package com.bookshop.order.repository;
 
-import com.bookshop.domain.OrderStatus;
+import com.bookshop.order.domain.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 

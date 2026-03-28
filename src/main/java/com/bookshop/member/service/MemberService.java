@@ -1,10 +1,12 @@
 package com.bookshop.member.service;
 
-import com.bookshop.domain.Address;
 import com.bookshop.member.domain.Member;
+import com.bookshop.member.dto.MemberDto;
 import com.bookshop.member.dto.MemberUpdateDto;
 import com.bookshop.member.repository.MemberJpaRepository;
+import com.bookshop.order.domain.Address;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,18 +18,29 @@ import java.util.List;
 public class MemberService {
 
     private final MemberJpaRepository memberJpaRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /*회원가입*/
     @Transactional
-    public Long join(Member member){
-        validateDuplicateMember(member);//중복회원 검증
-        memberJpaRepository.save(member);
-        return member.getId();
+    public Long join(MemberDto memberDto){
+
+        validateDuplicateMember(memberDto);//중복회원 검증
+
+        //dto -> entity 변환 해줌
+        Member memberEntity = memberDto.toEntity();
+
+        //비번은 꼭 service에서 암호화 따로 해주기
+        memberEntity.setPassword(bCryptPasswordEncoder.encode(memberDto.getPassword()));
+
+        //그럼 이제 저장ㄱㄱ
+        memberJpaRepository.save(memberEntity);
+
+        return memberEntity.getId();
     }
 
     //중복회원검증 로직
-    private void validateDuplicateMember(Member member) {
-        List<Member> findMembers = memberJpaRepository.findByName(member.getName());//같은 이름 있는지 확인, 유니크 제약조건 주는것도 좋은 방법(동시가입 이슈)
+    private void validateDuplicateMember(MemberDto memberDto) {
+        List<Member> findMembers = memberJpaRepository.findAllByName(memberDto.getName());//같은 이름 있는지 확인, 유니크 제약조건 주는것도 좋은 방법(동시가입 이슈)
         if (!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
@@ -49,7 +62,7 @@ public class MemberService {
     public void updateMember(Long id, MemberUpdateDto dto) {
         Member member = findOne(id);
         if (dto.getName() != null) member.setName(dto.getName());
-        if (dto.getPassword() != null) member.setPassword(dto.getPassword());
+        if (dto.getPassword() != null) member.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         if (dto.getCity() != null || dto.getStreet() != null || dto.getZipcode() != null) {
             member.setAddress(new Address(
                     dto.getCity() != null ? dto.getCity() : member.getAddress().getCity(),
@@ -68,7 +81,7 @@ public class MemberService {
 
     //회원 로그인 시 이름 검사
     public Member findByName(String name) {
-        List<Member> members = memberJpaRepository.findByName(name);
+        List<Member> members = memberJpaRepository.findAllByName(name);
         if (members.isEmpty()) {
             return null;
         }

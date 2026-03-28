@@ -21,3 +21,10 @@ logging:
   level:
     org.hibernate.sql: debug #로거를 통해서 출력하는게 좋음
     org.hibernate.orm.jdbc.bind: trace
+
+tossPayments:
+  secretKey: test_sk_test_key_for_testing
+
+jwt:
+  secret: bookshop-jwt-test-secret-key-for-testing-1234
+  expiration-ms: 3600000

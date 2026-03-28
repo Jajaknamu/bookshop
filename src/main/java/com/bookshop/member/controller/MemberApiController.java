@@ -29,9 +29,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원등록 성공")
     @PostMapping
     public ResponseEntity<Long> saveMember(@RequestBody MemberDto dto) {
-        Member member = dto.toEntity();
-        Long id = memberService.join(member);
-        return ResponseEntity.ok(id);
+        Long id = memberService.join(dto); //저장 후 생성된 회원id
+        return ResponseEntity.ok(id); //id만 반환
     }
 
     //모든 회원 조회 요청
